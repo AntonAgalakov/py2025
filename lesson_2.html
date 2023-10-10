@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python 2022-2023</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <style>
+        .nav {
+            border-radius: 30px;
+            width: 100%;
+        }
+        main {
+            margin: 40px auto;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV #1 и HEADER -->
+    <div class="top">
+      <div class="container">
+        <div class="row">
+          <!-- NAV #1 -->
+          <!-- HEADER -->
+            <header>
+              <div class="container">
+                <img class="nav" src="nav.png">
+              </div>
+            </header>
+        </div>
+      </div>
+    </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+      <div class="container">
+        <div class="row">
+          <!-- NAV #2 -->
+          <br>
+          <nav class="col-xl-2">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="index.html">Главная</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Практическое занятие 2</li>
+                </ol>
+              </nav>
+          </nav>
+          <!-- ARTICLE -->
+
+          <article class="col-md-8 col-xl-7">
+              <h1 class="header-h1">Практическое занятие 2</h1>
+              <div class="tasks">
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                     #1 задание
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Вася играет в Super Mario Bros. очень хорошо и получил N дополнительных жизней. Известно, что
+                      переменная, в которой хранится количество жизней может принимать значения от 0 до 255. В случае,
+                      если было 255 жизней и игрок получил дополнительную жизнь, счетчик обнуляется. Сколько жизней
+                      на счетчике?
+                        <br>Пример:
+                        <br>Ввод:  18
+                        <br>Вывод: 18
+                        <br>
+                        <br>Ввод:  818
+                        <br>Вывод: 53
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    #2 задание
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Дано натуральное число. Выведите его последнюю цифру. Вводится единственное целое положительное
+                      число (гарантируется, что оно не превышает 10000).
+                    <br>Пример:
+                    <br>Ввод:  635
+                    <br>Вывод: 5
+                    <br>
+                    <br>Ввод:  13
+                    <br>Вывод: 3
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    #3 задание
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Угадай число
+
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    #4 задание
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Действительный номерной знак машины?
+                      <br>Допустим, в  нашей стране старый формат номерных знаков автомобилей состоял из трех заглавных букв, следом за которыми шли три цифры.
+                      После того как все возможные номера были использованы, формат был изменен на четыре цифры, предшествующие трем заглавным буквам.
+                      <br>Напишите программу, запрашивающую у пользователя номерной знак машины и оповещающую о том, для какого формата подходит данная
+                      последовательность символов: для старого или нового. Если введенная последовательность не соответствует ни одному из двух форматов, укажите
+                        это в сообщении.
+
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    #5 задание
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                        Разработайте программу, принимающую на вход дату и  выводящую на экран дату, следующую за ней. Например, если пользователь введет дату,
+                        соответствующую 18 ноября 2019 года, на экран должен быть выведен
+                        следующий день, то есть 19 ноября 2019 года. Если входная дата будет
+                        представлять 30 ноября, то на выходе мы должны получить 1 декабря.
+                        И наконец, если ввести последний день года – 31 декабря 2019-го, пользователь должен увидеть на экране дату 1 января 2020-го.
+                        Дату пользователь должен вводить в три этапа: год, месяц и день.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    #6 задание
+                  </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Создайте цикл, который печатает четные числа до тех пор, пока не выведет ваш возраст. Если ваш возраст — нечетное
+                        число, создайте цикл, который печатает нечетные числа до совпадения с возрастом.
+
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSeven">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    #7 задание
+                  </button>
+                </h2>
+                <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Последовательность состоит из целых чисел и
+                        завершается числом 0. Определите значение наибольшего
+                        элемента последовательности. Вводится последовательность
+                        целых чисел, оканчивающаяся числом 0 (само число 0 в
+                        последовательность не входит, а служит как признак ее
+                        окончания).
+
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEight">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                    #8 задание
+                  </button>
+                </h2>
+                <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Последовательность состоит из целых чисел и
+                        завершается числом 0. Определите значение наибольшего
+                        элемента последовательности. Вводится последовательность
+                        целых чисел, оканчивающаяся числом 0 (само число 0 в
+                        последовательность не входит, а служит как признак ее
+                        окончания).
+
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingNine">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                    #9 задание
+                  </button>
+                </h2>
+                <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Последовательность состоит из целых чисел и
+                        завершается числом 0. Определите значение наибольшего
+                        элемента последовательности. Вводится последовательность
+                        целых чисел, оканчивающаяся числом 0 (само число 0 в
+                        последовательность не входит, а служит как признак ее
+                        окончания).
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+            </article>
+                  
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
