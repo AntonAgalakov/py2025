@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python 2023-2024</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <style>
+        .nav {
+            border-radius: 30px;
+            width: 100%;
+        }
+        main {
+            margin: 40px auto;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV #1 и HEADER -->
+    <div class="top">
+      <div class="container">
+        <div class="row">
+          <!-- NAV #1 -->
+          <!-- HEADER -->
+            <header>
+              <div class="container">
+                <img class="nav" src="nav.png">
+              </div>
+            </header>
+        </div>
+      </div>
+    </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+      <div class="container">
+        <div class="row">
+          <!-- NAV #2 -->
+          <br>
+          <nav class="col-xl-2">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="index.html">Главная</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Практическое занятие 6</li>
+                </ol>
+              </nav>
+          </nav>
+          <!-- ARTICLE -->
+
+          <article class="col-md-8 col-xl-7">
+              <h1 class="header-h1">Практическое занятие 6</h1>
+
+              <div class="tasks">
+                  <a href="./list.pdf">Основные функции</a>
+            <div class="accordion" id="accordionExample">
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSeven">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    #0 задание
+                  </button>
+                </h2>
+                <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingSeven" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Исполнитель Редактор получает на вход строку цифр и преобразовывает её.
+<br>Редактор может выполнять две команды, в обеих командах v и w обозначают цепочки цифр.
+<br>заменить (v, w)
+<br>нашлось (v)
+<br>Дана программа для исполнителя Редактор:
+<br>НАЧАЛО
+<br>    ПОКА нашлось (222) ИЛИ нашлось (888)
+<br>        ПОКА нашлось (555)
+<br>            заменить (555, 8)
+<br>        КОНЕЦ ПОКА
+<br>        ЕСЛИ нашлось (222)
+<br>            ТО заменить (222, 8)
+<br>            ИНАЧЕ заменить (888, 2)
+<br>        КОНЕЦ ЕСЛИ
+<br>    КОНЕЦ ПОКА
+<br>КОНЕЦ
+<br>Дана строка, состоящая из 21 цифры, причем первые три цифры — двойки, а
+остальные — пятерки. Какая строка получится в результате применения
+программы к данной строке?
+
+                  </div>
+                </div>
+              </div>
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEight">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                    #1 задание
+                  </button>
+                </h2>
+                <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      <h2>Опросник</h2>
+                      Создайте программу спрашивающую у пользователя его увлечения. После того, как пользователь закончит ввод,
+                      отсортируйте увлечения в алфавитном порядке.
+                      <br>Теперь удалите третье хобби
+                      <br>Второе хобби замените на "Бердвотчинг"
+                      <br>Если пользователь ввел больше 10 хобби, удалите десятое и последующие хобби
+                      <br>Выведите получившийся список пользователю
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingNine">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                    #2 задание
+                  </button>
+                </h2>
+                <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      <h2>Замена</h2>
+                      Пользователь ввел строку: <code>Три два раз</code>
+                      <br>Преобразуйте ее в список
+                      <br>Поменяйте местами первый и последний элемент
+                      <br>Элемент посередине преобразуйте в вверхний регистр: (два -> ДВА)
+                      <br>Выведите на экран получившийся список
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                     #3 задание
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                     <h2>Дубликаты</h2>
+                      В данном упражнении вам предстоит разработать программу, в которой ввода пустой.
+                      После этого на экране должны быть показаны слова, введенные пользователем, но без
+                      повторов, – каждое по одному разу. При этом слова должны быть отображены в том
+                      же порядке, в  каком их вводили с клавиатуры. Например, если пользователь на запрос
+                      программы введет следующий список слов:
+                      <br>
+                      <code>
+                          first <br>second <br>first <br>third <br>second <br>программа должна вывести: <br>first <br>second <br></br>third
+                      </code>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    #4 задание
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Напишите программу, запрашивающую у пользователя целые числа, пока он не оставит строку ввода пустой.
+                      После окончания ввода на экран должны быть выведены сначала все отрицательные числа, которые были введены,
+                      затем нулевые и только после этого положительные. Внутри каждой группы числа должны отображаться
+                      в той последовательности, в которой были введены пользователем. Например, если он ввел следующие числа:
+                      3, -4, 1, 0, -1, 0 и -2, вывод должен оказаться таким: -4, -1, -2, 0, 0, 3 и 1. Каждое значение должно отображаться на новой строке.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    #5 задание
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      <h2>Ниже</h2>
+                        Напишите программу, которая будет запрашивать у  пользователя числа,
+                      пока он не пропустит ввод. Сначала на экран должно быть выведено
+                        среднее значение введенного ряда чисел, после этого друг за другом необходимо
+                      вывести список чисел ниже среднего, равных ему (если такие
+                        найдутся) и выше среднего. Каждый список должен предваряться соответствующим заголовком.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    #6 задание
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Напишите программу на Python, чтобы найти список слов, длина которых превышает n, из заданного списка слов.
+
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    #7 задание
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Напишите функцию Python, которая принимает два списка и возвращает True, если у них есть хотя бы один общий член.
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEleven">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
+                    #9 задание
+                  </button>
+                </h2>
+                <div id="collapseEleven" class="accordion-collapse collapse" aria-labelledby="headingEleven" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+
+                      Секретное агентство «Super-Secret-no» решило для
+                        шифрования переписки своих сотрудников использовать
+                        «метод бутерброда». Сначала буквы слова нумеруются:
+                      <br>первая буква получает номер 1,
+                      <br>последняя буква - номер 2,
+                      <br>вторая – номер 3,
+                      <br>предпоследняя –номер 4,
+                      потом третья … и так для всех букв. Затем все буквы записываются в шифр в порядке
+                        своих номеров и в конец зашифрованного слова добавляется
+                        #, который нельзя использовать в сообщениях.
+                      <br>К сожалению, программист «Super-Secret-no», написал только программу шифрования и уволился.
+                      И теперь агенты не могут понять, что же они написали друг другу. Помогите им.
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTen">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    #1 домашнее задание
+                  </button>
+                </h2>
+                <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTen" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Создайте список своих любимых развлечений и сохраните его в переменной games.
+                      Теперь создайте список любимых лакомств, сохранив его в переменной foods. Объедините
+                      два этих списка, сохранив результат в переменной favorites, и напечатайте значение этой переменной.
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwelve">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">
+                    #2 домашнее задание
+                  </button>
+                </h2>
+                <div id="collapseTwelve" class="accordion-collapse collapse" aria-labelledby="headingTwelve" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Напишите программу, которая, будет запрашивать у  пользователя целые числа и  сохранять их в  виде списка.
+                      Индикатором окончания ввода значений также должен служить ноль. На этот раз необходимо вывести на экран введенные
+                      значения в  порядке убывания.
+                  </div>
+                </div>
+              </div>
+                
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThirteen">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThirteen" aria-expanded="false" aria-controls="collapseThirteen">
+                    #3 домашнее задание
+                  </button>
+                </h2>
+                <div id="collapseThirteen" class="accordion-collapse collapse" aria-labelledby="headingThirteen" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                     На вход программе подается четное число n ≥ 2. Напишите программу, которая выводит список четных чисел [2, 4, 6, ..., n].
+                  </div>
+                </div>
+              </div>
+
+              </div>
+            </div>
+            </article>
+                  
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
