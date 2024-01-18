@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python 2023-2024</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <style>
+        .nav {
+            border-radius: 30px;
+            width: 100%;
+        }
+        main {
+            margin: 40px auto;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV #1 и HEADER -->
+    <div class="top">
+      <div class="container">
+        <div class="row">
+          <!-- NAV #1 -->
+          <!-- HEADER -->
+            <header>
+              <div class="container">
+                <img class="nav" src="nav.png">
+              </div>
+            </header>
+        </div>
+      </div>
+    </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+      <div class="container">
+        <div class="row">
+          <!-- NAV #2 -->
+          <br>
+          <nav class="col-xl-2">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="index.html">Главная</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Практическое занятие 15</li>
+                </ol>
+              </nav>
+          </nav>
+          <!-- ARTICLE -->
+
+          <article class="col-md-8 col-xl-7">
+              <h1 class="header-h1">Практическое занятие 15</h1>
+              <h3>Повторение темы "Словарь"</h3>
+
+              <div class="tasks">
+            <div class="accordion" id="accordionExample">
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    #1 задание
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Напишите программу, которая меняет местами пары соседних элементов, кроме первого и последнего.
+                  </div>
+                </div>
+              </div>
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    #2 задание
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      На вход программе подается:
+                        <br>1. Зашифрованная строка.
+                        <br>2. N – число букв в словаре.
+                        <br>3. N строк, в которых в формате «буква: частота» указывается, сколько раз каждая буква встречается в слове.
+                        <br>Программа выводит расшифрованное слово.
+                        <br>
+                        <br>Пример ввода:
+                        <br>?*!*!*
+                        <br>3
+                        <br>b: 1
+                        <br>a: 3
+                        <br>n: 2
+                        <br>Пример вывода: banana
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    #3 задание
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Данные об email-адресах студентов хранятся в словаре:
+                      <br>
+<code>emails = {'mgu.edu': ['andrei_serov', 'alexander_pushkin', 'elena_belova', 'kirill_stepanov'],
+<br>'gmail.com': ['alena.semyonova', 'ivan.polekhin', 'marina_abrabova'],
+<br>'msu.edu': ['sergei.zharkov', 'julia_lyubimova', 'vitaliy.smirnoff'],
+<br>'yandex.ru': ['ekaterina_ivanova', 'glebova_nastya'],
+<br>'harvard.edu': ['john.doe', 'mark.zuckerberg', 'helen_hunt'],
+<br>'mail.ru': ['roman.kolosov', 'ilya_gromov', 'masha.yashkina']}</code>
+<br>Нужно дополнить код таким образом, чтобы он вывел все адреса в алфавитном порядке и в формате имя_пользователя@домен.
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                     #4 задание
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Вы разговаривали с Поликарпом и задали ему вопрос. Вы знаете, что когда он хочет ответить «да»,
+                      он повторяет Yes много раз подряд. Из-за шума вы услышали только часть ответа — некоторую его подстроку.
+                      То есть, если он ответил YesYes, то вы могли услышать esY, YesYes, sYes, e, но не могли Yess, YES или se.
+                      Определите, правда ли, что заданная строка 𝑠 является подстрокой YesYesYes... (Yes, повторенного много раз подряд).
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    #5 задание
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Вы работаете в службе контроля качества технической поддержки одной большой компании. Ваша работа заключается в том, чтобы проверять, все ли вопросы клиентов были решены.
+                        Сегодня вам на проверку прислали копию переписки одного из клиентов со специалистом технической поддержки. По регламенту работы на каждое сообщение клиента должно последовать одно или несколько сообщений, являющихся ответом специалиста поддержки. Однако, иногда клиент задает вопросы настолько быстро, что некоторые из ответов специалиста на старые вопросы появляются уже после того, как клиент задал несколько новых вопросов.
+                        Из-за политики конфиденциальности полный текст сообщений вам не доступен, виден лишь порядок сообщений, а также тип каждого сообщения: вопрос клиента или ответ специалиста технической поддержки. Известно, что диалог начался с вопроса клиента.
+                        От вас требуется определить, может ли этот диалог соответствовать регламенту работы, описанному выше, или правила работы были точно нарушены.
+                        <br><code>4
+                        <br>QQAA --- (+)
+                        <br>4
+                        <br>QQAQ --- (-)
+                        <br>3
+                      <br>QAA --- (-)</code>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    #6 задание
+                  </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      У Пака Чанека есть простое число 𝑛 . Найдите простое число 𝑚 такое, что 𝑛+𝑚 не является простым.
+                      <br>Простое число — это число с ровно 2 множителями. Первые несколько простых чисел: 2,3,5,7,11,13,… .
+                      <br>В частности, 1 не является простым числом.
+
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSeven">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                    #7 задание
+                  </button>
+                </h2>
+                <div id="collapseSeven" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      В базе данных ветеринарной клиники информация о пациентах-котах хранится в списке списков. Данные о кошках и их владельцах записаны в формате «Кличка животного, Возраст животного, Имя владельца, Фамилия владельца»:
+<code>cats = [['Мартин', 5, 'Алексей', 'Егоров'],
+<br>['Фродо', 3, 'Анна', 'Самохина'],
+<br>['Вася', 4, 'Андрей', 'Белов'],
+<br>['Муся', 7, 'Игорь', 'Бероев'],
+<br>['Снейп', 1, 'Марина', 'Апраксина'],
+<br>['Лютик', 4, 'Виталий', 'Соломин'],
+<br>['Марта', 5, 'Сергей', 'Колесников'],
+<br>['Буся', 12, 'Алена', 'Федорова'],
+<br>['Джонни', 10, 'Игорь', 'Андропов'],
+<br>['Мурзик', 1,'Даниил', 'Невзоров'],
+<br>['Рыжик', 7, 'Владимир', 'Медведев'],
+<br>['Гарфилд', 3, 'Александр', 'Березуев']]</code>
+<br>Сделайте из данного списка словарь такого вида:
+                      <br> d_cats = {'Алексей Егоров': 'Мартин 5',
+                      <br>'Анна Самохина': 'Фродо 3',
+                      <br>...}
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEight">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                    #8 задание
+                  </button>
+                </h2>
+                <div id="collapseEight" class="accordion-collapse collapse" aria-labelledby="headingEight" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                       Настольной игре Скрабл (Scrabble) каждая буква имеет определенную ценность. В случае с английским алфавитом очки распределяются так:
+<br>A, E, I, O, U, L, N, S, T, R – 1 очко;
+<br>D, G – 2 очка;
+<br>B, C, M, P – 3 очка;
+<br>F, H, V, W, Y – 4 очка;
+<br>K – 5 очков;
+<br>J, X – 8 очков;
+<br>Q, Z – 10 очков.
+<br>Напишите программу, которая вычисляет стоимость введенного пользователем слова.
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingNine">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
+                    #9 задание
+                  </button>
+                </h2>
+                <div id="collapseNine" class="accordion-collapse collapse" aria-labelledby="headingNine" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Напишите программу, которая принимает на вход строку, и выводит слово, которое встречается во фразе реже всего.
+                    <br>Пример ввода:
+                    <br>дом милый дом.
+                    <br>
+                    <br>Пример вывода:
+                    <br>милый
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTen">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    #1 домашнее задание
+                  </button>
+                </h2>
+                <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTwelve" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      Магическими называются даты, в которых произведение дня и месяца составляет последние две цифры года.
+                      Например, 10.6.1960 года– магическая дата, поскольку 10 Х 6 = 60. Напишите функцию, определяющую,
+                      является ли введенная дата магической. Используйте написанную функцию в главной программе для отображения всех магических дат в XX веке.
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEleven">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEleven" aria-expanded="false" aria-controls="collapseEleven">
+                    #2 домашнее задание
+                  </button>
+                </h2>
+                <div id="collapseEleven" class="accordion-collapse collapse" aria-labelledby="headingEleven" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                     Пользователь вводит число K - количество фруктов. Затем он вводит K фруктов в формате: название фрукта и его количество. Добавьте все фрукты в словарь, где название фрукта - это ключ, а количество - значение. Например:
+<br>Ввод:
+<br>3
+<br>Яблоко
+<br>3
+<br>Апельсин
+<br>3
+<br>Мандарин
+<br>10
+<br>Вывод:
+<br> {'Яблоко': 3, 'Апельсин': 3, 'Мандарин': 10}
+                  </div>
+                </div>
+              </div>
+
+<!--                <div class="accordion-item">-->
+<!--                <h2 class="accordion-header" id="headingTwelve">-->
+<!--                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">-->
+<!--                    #2 домашнее задание-->
+<!--                  </button>-->
+<!--                </h2>-->
+<!--                <div id="collapseTwelve" class="accordion-collapse collapse" aria-labelledby="headingTwelve" data-bs-parent="#accordionExample">-->
+<!--                  <div class="accordion-body">-->
+<!--                      Напишите рекурсивную функцию sum_odd(lis), которая будет принимать список из целых чисел и-->
+<!--                      возвращать сумму только нечётных чисел из списка.-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+              </div>
+            </div>
+            </article>
+            <aside class="col-md-4 col-xl-3">
+              <div class="tasks">
+      <div class="row row-cols-1 row-cols-md-1 g-4">
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <b>Словарь</b> — неупорядоченная структура данных, которая позволяет хранить пары «ключ — значение».
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+                Пример создания словаря:
+              <br><code>student = {'name': 'Ivan', 'age': 12}</code>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+                Получение значения из словаря по ключу 'name':
+              <br><code>print(student['name'])</code>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              Удаление из словаря:
+                <br><code>del student['age']</code>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+          </aside>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
