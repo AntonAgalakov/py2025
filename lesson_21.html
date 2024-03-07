@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Python 2023-2024</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <style>
+        .nav {
+            border-radius: 30px;
+            width: 100%;
+        }
+        main {
+            margin: 40px auto;
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV #1 и HEADER -->
+    <div class="top">
+      <div class="container">
+        <div class="row">
+          <!-- NAV #1 -->
+          <!-- HEADER -->
+            <header>
+              <div class="container">
+                <img class="nav" src="nav.png">
+              </div>
+            </header>
+        </div>
+      </div>
+    </div>
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <main>
+      <div class="container">
+        <div class="row">
+          <!-- NAV #2 -->
+          <br>
+          <nav class="col-xl-2">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="index.html">Главная</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Практическое занятие 21</li>
+                </ol>
+              </nav>
+          </nav>
+          <!-- ARTICLE -->
+
+          <article class="col-md-8 col-xl-7">
+              <h1 class="header-h1">Практическое занятие 21</h1>
+
+              <div class="tasks">
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    #1 задание
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <h3>Слово</h3><br>
+
+                    Васю очень огорчает, что многие люди в интернете смешивают маленькие и большие буквы в одном слове. Поэтому
+                    он решил разработать расширение для своего любимого браузера, которое меняет регистр букв в каждом слове так,
+                    чтобы оно либо состояло только из маленьких букв, либо, наоборот, только из больших. При этом в слове должно
+                    измениться как можно меньше букв. Например, слово HoUse должно замениться на house, а слово ViP — на VIP. В
+                    случае, если в слове содержится одинаковое количество маленьких и больших букв, нужно заменить все буквы на
+                    маленькие. Например, maTRIx нужно заменить на matrix. Ваша задача — обработать указанным способом одно
+                    заданное слово.
+
+                    <div class="card">
+                      <div class="card-body">
+                        <b>Входные данные:</b>
+                        HoUse
+                        <br><b>Выходные данные:</b>
+                        house
+                        <br><b>Входные данные:</b>
+                        ViP
+                        <br><b>Выходные данные:</b>
+                        VIP
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      #2 задание
+                    </button>
+                  </h2>
+                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      <h3>Корректный ip-адрес</h3><br>
+  
+                      На вход программе подается строка текста, содержащая 4 целых неотрицательных числа, разделенных точкой. 
+                      Напишите программу, которая определяет, является ли введенная строка текста корректным ip-адресом.
+                      <br> Примечание. ip-адрес является корректным, если все 4 числа находятся в диапазоне от 0 до 255 включительно.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    #3 задание
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    
+                    <h3>Файловая система BerOS</h3>
+                    <br>
+                    В новой операционной системе BerOS (кроме нескучных обоев) была введена новая очень удобная возможность — в
+                    записи пути к директории можно использовать в качестве разделителя не один традиционный слэш, а любое количество.
+                    Например, записи <br><code> //usr///local//nginx/sbin// </code><br>и <br><code>/usr/local/nginx///sbin</code><br> эквивалентны. Символ <code>'/'</code> (или несколько таких символов)
+                    в конце записи пути к директории необходим только в случае записи пути к корневой директории, которая может быть задана
+                    одним символом <code>'/'</code>. <br>Назовем нормализованной записью пути запись, в которой содержится наименьшее возможное количество
+                    символов <code>'/'</code>. <br>Ваша задача — для заданной записи пути найти нормализованную запись этого же пути.
+                    <br>
+                    <div class="card">
+                      <div class="card-body">
+                        <b>Входные данные:</b> //usr///local//nginx/sbin
+                        <br><b>Выходные данные:</b> /usr/local/nginx/sbin
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                     #4 задание
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <h3>Интересное число</h3><br>
+                    Назовем число интересным, если в нем разность максимальной и минимальной цифры равняется средней по величине цифре. 
+                    Напишите программу, которая определяет, интересное число или нет. Если число интересное, следует вывести «Число интересное», 
+                    иначе - «Число неинтересное».
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    #5 задание
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                      <h3>Код Ревью</h3>
+                      На обработку поступает натуральное число. Нужно написать программу, которая выводит на экран произведение цифр введенного числа. Программист торопился и написал программу неправильно.
+                      Найдите все ошибки в этой программе (их ровно 3). Известно, что каждая ошибка затрагивает только одну строку и может быть исправлена без изменения других строк.<br>
+                      <code>
+                        n = input()<br>
+                        product = n % 10<br>
+                        while n >= 10:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;digit = n % 10<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;product = product * digit<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;n //= 10<br>
+                        print(product)<br>
+                      </code>
+                  </div>
+                </div>
+              </div>
+
+                <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTen">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
+                    #6 задание
+                  </button>
+                </h2>
+                <div id="collapseTen" class="accordion-collapse collapse" aria-labelledby="headingTwelve" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    Дано натуральное число n. Напишите программу, которая печатает численный треугольник с высотой равной n, в соответствии с примером: <br>
+                    1<br>
+                    121<br>
+                    12321<br>
+                    1234321<br>
+                    123454321<br>
+                    ...<br>
+                    <br>                
+                  </div>
+                </div>
+              </div>
+
+                
+
+<!--                <div class="accordion-item">-->
+<!--                <h2 class="accordion-header" id="headingTwelve">-->
+<!--                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwelve" aria-expanded="false" aria-controls="collapseTwelve">-->
+<!--                    #2 домашнее задание-->
+<!--                  </button>-->
+<!--                </h2>-->
+<!--                <div id="collapseTwelve" class="accordion-collapse collapse" aria-labelledby="headingTwelve" data-bs-parent="#accordionExample">-->
+<!--                  <div class="accordion-body">-->
+<!--                      Напишите рекурсивную функцию sum_odd(lis), которая будет принимать список из целых чисел и-->
+<!--                      возвращать сумму только нечётных чисел из списка.-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+              </div>
+            </div>
+            </article>
+            
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+
+</html>
