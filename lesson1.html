@@ -4,147 +4,268 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Урок #1 по Python</title>
+    <!-- Подключаем современный шрифт -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border-radius: 16px;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf9 100%);
+            color: var(--text);
+            line-height: 1.6;
             padding: 20px;
-            color: #333;
+            min-height: 100vh;
         }
+
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
+
+        /* Кнопка "Назад" */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e9ecef;
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background: #dee2e6;
+            transform: translateX(-4px);
+        }
+
         h1 {
-            color: #2c3e50;
             text-align: center;
-            margin-top: 0;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+            color: var(--secondary);
         }
-        .lesson-image {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            display: block;
-            margin: 0 auto 20px;
-            border-radius: 8px;
+
+        p.intro {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 32px;
+            font-size: 1.05rem;
         }
+
         h2 {
-            color: #3498db;
-            margin-top: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin: 36px 0 20px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
         }
+
         h2 img {
             width: 28px;
             height: 28px;
         }
+
         .task {
-            background: #ecf0f1;
-            padding: 15px;
-            margin: 15px 0;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
+            background: #f9fbfd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
+            transition: var(--transition);
         }
 
-        /* Стили для пошагового теста */
-        .test-container {
-            margin-top: 20px;
+        .task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.12);
         }
+
+        .task h3 {
+            margin: 12px 0 12px;
+            font-size: 1.2rem;
+            color: var(--secondary);
+        }
+
+        .task ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .task li {
+            margin-bottom: 6px;
+        }
+
+        pre {
+            font-family: 'JetBrains Mono', monospace;
+            background: #2b2d42;
+            color: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin-top: 12px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #eef2ff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: var(--secondary);
+        }
+
+        /* Стили для задач */
+        .task.task-hard {
+            border-left-color: #e74c3c;
+            background: #fdf7f7;
+        }
+
+        /* Тест */
+        .test-container {
+            margin-top: 30px;
+        }
+
         .test-question {
             display: none;
-            padding: 20px;
-            background: #fafafa;
-            border-radius: 8px;
+            padding: 24px;
+            background: #f9fbfd;
+            border-radius: var(--border-radius);
             margin-bottom: 20px;
+            animation: fadeIn 0.4s ease;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .test-question.active {
             display: block;
         }
+
         .test-question label {
             display: block;
-            margin: 10px 0;
+            margin: 12px 0;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e0e6f0;
+            border-radius: 12px;
             cursor: pointer;
-            padding: 10px;
-            border-radius: 6px;
-            background: #fff;
-            border: 1px solid #ddd;
-            transition: all 0.2s;
+            transition: var(--transition);
+            font-weight: 500;
         }
+
         .test-question label:hover {
-            background: #f0f8ff;
-            border-color: #3498db;
+            border-color: var(--primary-light);
+            background: #f0f5ff;
         }
+
+        .test-question input[type="radio"] {
+            margin-right: 10px;
+            accent-color: var(--primary);
+        }
+
         .test-controls {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 20px;
         }
+
         button {
-            background-color: #3498db;
+            background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 12px 28px;
             margin: 5px;
-            border-radius: 6px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
         }
+
         button:hover {
-            background-color: #2980b9;
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(63, 55, 201, 0.4);
         }
+
         button:disabled {
-            background-color: #bdc3c7;
+            background: #b0b0b0;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
+
         #result {
-            margin-top: 20px;
-            font-weight: bold;
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1.1rem;
             text-align: center;
-            font-size: 18px;
-            padding: 15px;
-            border-radius: 8px;
+            display: none;
         }
-        pre {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            padding: 15px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
+
+        #result.show {
+            display: block;
+            animation: pulse 0.6s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
     <div class="container">
 
-        <div style="text-align: left; margin-bottom: 15px;">
-            <button onclick="history.back()" style="background-color: #95a5a6; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">
-                ← Назад
-            </button>
-        </div>
+        <a href="javascript:history.back()" class="back-btn">← Назад</a>
 
         <h1>Урок #1: Основы Python</h1>
+        <p class="intro">В этом уроке вы познакомитесь с базовыми понятиями языка Python: переменные, типы данных, ввод и вывод.</p>
 
-        <p>В этом уроке вы познакомитесь с базовыми понятиями языка Python: переменные, типы данных, ввод и вывод.</p>
+        <!-- === ТЕОРИЯ === -->
+        <h2>📚 Основные понятия</h2>
 
-        <!-- === НОВЫЕ ТЕОРЕТИЧЕСКИЕ БЛОКИ === -->
-        <h2>Основные понятия</h2>
-
-        <div class="task" style="background: #e8f4fc; border-left-color: #3498db;">
-            <p><strong>Переменная</strong> — это как коробка с этикеткой, в которую можно положить что-нибудь (число, слово, смайлик и т.д.), а потом использовать это содержимое позже.</p>
-            
+        <div class="task">
             <p><strong>Переменная</strong> — это именованный объект в программе, который хранит некоторое значение. Это значение может быть числом, строкой, символом (в том числе эмодзи), логическим значением и другими типами данных.</p>
             <p>Пример: <code>name = "Алиса"</code>, <code>age = 15</code></p>
         </div>
 
-        <div class="task" style="background: #f0f9f0; border-left-color: #27ae60;">
+        <div class="task" style="border-left-color: #27ae60;">
             <p><strong>Типы данных</strong> — определяют, какие значения может принимать переменная и какие операции можно над ней выполнять.</p>
             <ul>
                 <li><code>str</code> — строка (текст): <code>"Привет"</code></li>
@@ -154,7 +275,7 @@
             </ul>
         </div>
 
-        <div class="task" style="background: #fef9e7; border-left-color: #f39c12;">
+        <div class="task" style="border-left-color: #f39c12;">
             <p><strong>Функции ввода и вывода:</strong></p>
             <ul>
                 <li><code>print(...)</code> — выводит текст или значение на экран.</li>
@@ -166,13 +287,13 @@
             </p>
         </div>
 
-        <div class="task" style="background: #f5eeff; border-left-color: #9b59b6;">
+        <div class="task" style="border-left-color: #9b59b6; background: #f8f5ff;">
             <h3>🐍 Интересный факт</h3>
             <p>Python назван не в честь змеи, а в честь британского комедийного шоу <em>«Летающий цирк Монти Пайтона»</em>! Его создатель, Гвидо ван Россум, был большим фанатом.</p>
             <p>Python — один из самых популярных языков в мире. Он используется в веб-разработке, анализе данных, искусственном интеллекте, автоматизации и даже в космических миссиях NASA!</p>
         </div>
 
-        <div class="task" style="background: #fff8e1; border-left-color: #ff9800;">
+        <div class="task" style="border-left-color: #ff9800; background: #fff9f0;">
             <h3>💡 Советы по решению задач</h3>
             <ul>
                 <li>Всегда проверяйте, какой тип данных вы получаете от <code>input()</code> — если нужно число, используйте <code>int()</code> или <code>float()</code>.</li>
@@ -180,7 +301,7 @@
             </ul>
         </div>
 
-        <div class="task" style="background: #eef7ff; border-left-color: #2980b9;">
+        <div class="task" style="border-left-color: #2980b9; background: #f0f7ff;">
             <h3>Пример: Простая анкета</h3>
             <pre>
 name = input("Как вас зовут? ")
@@ -203,7 +324,7 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 Какой твой любимый актер?</p>
         </div>
 
-        <div class="task">
+        <div class="task task-hard">
             <h3>Задача 2 🏋️‍♂️</h3>
             <p>Напишите программу, которая по данному числу N от 1 до 9 выводит на экран N пингвинов. 
                 Изображение одного пингвина имеет размер 5×9 символов, между двумя соседними пингвинами 
@@ -228,7 +349,7 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 <br>Останется в шляпе монет - 6</p>
         </div>
 
-        <div class="task">
+        <div class="task task-hard">
             <h3>Задача 4 🏋️‍♂️</h3>
             <p>Интернет-магазин занимается продажей различных сувениров и безделушек. 
                 Каждый сувенир весит 75 г, а безделушка – 112 г. Напишите программу, 
@@ -252,7 +373,7 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
             </p>
         </div>
 
-        <div class="task">
+        <div class="task task-hard">
             <h3>Задача 7 🏋️‍♂️</h3>
             <p>Разработайте программу, которая выводит на экран цифры целого трехзначного числа, введенного с клавиатуры
                 <br>Пример выполнения:
@@ -263,13 +384,13 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
 
         <!-- === ТЕСТ === -->
         <h2>
-            <img src="https://cdn-icons-png.flaticon.com/512/3051/3051303.png" alt="Тест" style="width: 28px; height: 28px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/3051/3051303.png" alt="Тест">
             Тест по уроку
         </h2>
-        <p>Ответьте на 5 вопросов. Вернуться к предыдущим вопросам нельзя!</p>
+        <p style="text-align: center; color: var(--text-light); margin-bottom: 20px;">Ответьте на 5 вопросов. Вернуться к предыдущим вопросам нельзя!</p>
 
         <div class="test-container">
-            <!-- Вопрос 1 -->
+            <!-- Вопросы остаются без изменений -->
             <div class="test-question active" data-question="1">
                 <p><strong>1. Какая функция используется для вывода текста в Python?</strong></p>
                 <label><input type="radio" name="q1" value="a"> echo()</label>
@@ -278,7 +399,6 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 <label><input type="radio" name="q1" value="d"> console.log()</label>
             </div>
 
-            <!-- Вопрос 2 -->
             <div class="test-question" data-question="2">
                 <p><strong>2. Какой тип данных у переменной <code>x = "123"</code>?</strong></p>
                 <label><input type="radio" name="q2" value="a"> int</label>
@@ -287,7 +407,6 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 <label><input type="radio" name="q2" value="d"> bool</label>
             </div>
 
-            <!-- Вопрос 3 -->
             <div class="test-question" data-question="3">
                 <p><strong>3. Как правильно присвоить значение переменной?</strong></p>
                 <label><input type="radio" name="q3" value="a"> let x = 5</label>
@@ -296,7 +415,6 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 <label><input type="radio" name="q3" value="d"> var x = 5</label>
             </div>
 
-            <!-- Вопрос 4 -->
             <div class="test-question" data-question="4">
                 <p><strong>4. Какой результат выполнения кода: <code>print(10 // 3)</code>?</strong></p>
                 <label><input type="radio" name="q4" value="a"> 3.333...</label>
@@ -305,7 +423,6 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 <label><input type="radio" name="q4" value="d"> Ошибка</label>
             </div>
 
-            <!-- Вопрос 5 -->
             <div class="test-question" data-question="5">
                 <p><strong>5. Какой тип у результата выражения: <code>input("Ваше имя: ")</code>?</strong></p>
                 <label><input type="radio" name="q5" value="a"> int</label>
@@ -327,28 +444,22 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
         let currentQuestion = 1;
         const totalQuestions = 5;
         let userAnswers = {};
-    
-        // Зашифрованные правильные ответы (Base64)
         const encryptedAnswers = "eyJxMSI6ImIiLCJxMiI6ImMiLCJxMyI6ImMiLCJxNCI6ImIiLCJxNSI6ImMifQ==";
-    
-        // Функция для расшифровки
+
         function decryptAnswers() {
             try {
-                const decoded = atob(encryptedAnswers);
-                return JSON.parse(decoded);
+                return JSON.parse(atob(encryptedAnswers));
             } catch (e) {
-                console.error("Ошибка расшифровки ответов!");
+                console.error("Ошибка расшифровки!");
                 return {};
             }
         }
-    
+
         function showQuestion(num) {
-            document.querySelectorAll('.test-question').forEach(q => {
-                q.classList.remove('active');
-            });
+            document.querySelectorAll('.test-question').forEach(q => q.classList.remove('active'));
             document.querySelector(`.test-question[data-question="${num}"]`).classList.add('active');
         }
-    
+
         function saveAnswer() {
             const currentName = `q${currentQuestion}`;
             const selected = document.querySelector(`input[name="${currentName}"]:checked`);
@@ -358,11 +469,10 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
             }
             return false;
         }
-    
+
         function updateButton() {
             const nextBtn = document.getElementById('nextBtn');
             const submitBtn = document.getElementById('submitBtn');
-    
             if (currentQuestion === totalQuestions) {
                 nextBtn.style.display = 'none';
                 submitBtn.style.display = 'inline-block';
@@ -371,13 +481,12 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 submitBtn.style.display = 'none';
             }
         }
-    
+
         function nextOrSubmit() {
             if (!saveAnswer()) {
                 alert('Пожалуйста, выберите ответ!');
                 return;
             }
-    
             if (currentQuestion < totalQuestions) {
                 currentQuestion++;
                 showQuestion(currentQuestion);
@@ -386,47 +495,43 @@ print("Привет,", name + "! Вам", age, "лет.")</pre>
                 submitTest();
             }
         }
-    
+
         function submitTest() {
             saveAnswer();
-    
-            // Расшифровываем ответы только при проверке
             const answers = decryptAnswers();
-    
             let score = 0;
             for (let q in answers) {
-                if (userAnswers[q] === answers[q]) {
-                    score++;
-                }
+                if (userAnswers[q] === answers[q]) score++;
             }
-    
+
             const percentage = Math.round((score / totalQuestions) * 100);
             let message = `Ваш результат: ${score} из ${totalQuestions} (${percentage}%)`;
-    
-            let color = 'red';
+
+            let color = '#e74c3c';
             if (score === totalQuestions) {
-                color = 'green';
+                color = '#2ecc71';
                 message += '<br>🏆 Отлично! Вы мастер Python!';
             } else if (score >= 4) {
-                color = 'green';
+                color = '#2ecc71';
                 message += '<br>👍 Почти идеально! Отличный результат!';
             } else if (score >= 3) {
-                color = 'orange';
+                color = '#f39c12';
                 message += '<br>🙂 Неплохо! Повторите спорные моменты.';
             } else {
                 message += '<br>📚 Советуем пересмотреть урок.';
             }
-    
+
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = message;
             resultDiv.style.color = color;
             resultDiv.style.backgroundColor = color + '15';
             resultDiv.style.border = `2px solid ${color}`;
-    
+            resultDiv.classList.add('show');
+
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('submitBtn').style.display = 'none';
         }
-    
+
         updateButton();
     </script>
 </body>
