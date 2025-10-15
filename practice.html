@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техническое задание: Словарный запас Пушкина</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 1.8em;
+            color: #7f8c8d;
+            font-weight: 300;
+        }
+
+        /* Стили для таймера */
+        .timer-container {
+            margin-top: 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .timer-unit {
+            background: #f8f9fa;
+            padding: 8px 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .timer-label {
+            display: block;
+            font-size: 0.8em;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .timer {
+                gap: 8px;
+            }
+            .timer-unit {
+                min-width: 45px;
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Остальные стили без изменений */
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .objective-card {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .objective-card h3 {
+            color: white;
+        }
+
+        .tasks-card h3::before {
+            content: '▶';
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .data-card h3::before {
+            content: '📁';
+        }
+
+        .requirements-card h3::before {
+            content: '▶';
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .tips-card h3::before {
+            content: '▶';
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .fact-card h3::before {
+            content: '▶';
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .check-card h3::before {
+            content: '▶';
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .code-card h3::before {
+            content: '▶';
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .task-list li::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .requirements-card {
+            background: #2c3e50;
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .requirements-card h3 {
+            color: white;
+        }
+
+        .requirements-card li::before {
+            content: '✓';
+            color: #4ecdc4;
+        }
+
+        .tips-card {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .fact-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .fact-card h3 {
+            color: white;
+        }
+
+        .check-card {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .check-card h3 {
+            color: white;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .file-structure {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .check-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .check-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .check-button:hover {
+            background: #ee5a24;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .quote {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .icon-text {
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        .download-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #2980b9, #1c6ea4);
+        }
+
+        .download-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Техническое задание</h1>
+            <h2>Проект A.C.</h2>
+        
+        </div>
+
+        <!-- Остальной контент без изменений -->
+        <div class="content">
+            <div class="card objective-card">
+                <h3><span class="icon-text">🎯</span>Цель проекта</h3>
+                <p>На основе текстов произведений А.С. Пушкина определить размер его словарного запаса и проанализировать лексические особенности с помощью Python.</p>
+                <div class="quote">
+                    <strong>Примечание:</strong> Тексты обработаны и содержат только символы русского алфавита в нижнем регистре и пробелы
+                </div>
+            </div>
+
+            <div class="card tasks-card">
+                <h3>Основные задачи</h3>
+                <ul class="task-list">
+                    <li><strong>Объединение и токенизация</strong><br>Объединить все слова из всех файлов в единый список, разделив по пробелам и символам новой строки.</li>
+                    <li><strong>Уникальный словарный запас</strong><br>Определить количество уникальных слов (без повторений) — это и есть оценка словарного запаса Пушкина.</li>
+                    <li><strong>Экстремальные слова</strong><br>Найти все слова минимальной длины (≥1) и максимальной длины. Вывести по 3 примера каждого типа и указать их длину.</li>
+                    <li><strong>Первая буква слов</strong><br>Подсчитать, сколько слов начинается с каждой буквы русского алфавита. Вывести в формате: <code>а: 1245, б: 876, ...</code>.</li>
+                    <li><strong>Палиндромы</strong><br>Найти все слова, которые читаются одинаково слева направо и справа налево (например, «аза», «шалаш»). Вывести все.</li>
+                    <li><strong>Лексическое разнообразие</strong><br>Вычислить коэффициент: <code>D = (число уникальных слов) / (общее число слов)</code>. Чем ближе к 1 — тем разнообразнее текст.</li>
+                    <li><strong>Вес слов</strong><br>Присвоить буквам вес: а=1, б=2, ..., я=33. Для каждого слова посчитать сумму весов букв. Найти:
+                        <ul style="margin-top: 8px; padding-left: 20px;">
+                            <li>самое «тяжёлое» слово (макс. сумма),</li>
+                            <li>самое «лёгкое» (мин. сумма),</li>
+                            <li>средний вес всех слов.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Стилевые признаки</strong><br>Рассчитать:
+                        <ul style="margin-top: 8px; padding-left: 20px;">
+                            <li>среднюю длину слова,</li>
+                            <li>долю коротких слов (1–3 буквы) от общего числа,</li>
+                            <li>наиболее частую гласную (а, е, ё, и, о, у, ы, э, ю, я),</li>
+                            <li>наиболее частую согласную.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Генерация «псевдо-Пушкина»</strong><br>Построить простую модель: для каждого слова запомнить, какие слова за ним следуют. Затем сгенерировать цепочку из 10 слов, начав со случайного и выбирая следующее случайно из возможных.</li>
+                    <li><strong>Классификация по длине</strong><br>Разделить все уникальные слова на три категории и сохранить в отдельные файлы:
+                        <div class="file-structure" style="margin-top: 10px;">
+                            <div class="file-item">
+                                <span class="file-icon">[F]</span>
+                                <span>short_words.txt (1–3 буквы)</span>
+                            </div>
+                            <div class="file-item">
+                                <span class="file-icon">[F]</span>
+                                <span>medium_words.txt (4–7 букв)</span>
+                            </div>
+                            <div class="file-item">
+                                <span class="file-icon">[F]</span>
+                                <span>long_words.txt (8+ букв)</span>
+                            </div>
+                        </div>
+                        Слова в файлах должны быть отсортированы по алфавиту.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card data-card">
+                <h3>Формат входных данных</h3>
+                <div class="file-structure">
+                    <div class="file-item">
+                        <span class="file-icon">[D]</span>
+                        <span>pushkin_texts/</span>
+                    </div>
+                    <div class="file-item" style="margin-left: 20px;">
+                        <span class="file-icon">[F]</span>
+                        <span>любой_файл.txt</span>
+                    </div>
+                </div>
+
+                <a href="pushkin_texts.zip" download="pushkin_texts.zip" class="download-button">
+                    📥 Скачать архив с текстами Пушкина
+                </a>
+                <div class="timer-container">
+                    <div>На выполнение заданий осталось:</div>
+                    <div class="timer" id="countdown-timer">
+                        <div class="timer-unit"><span id="days">--</span><span class="timer-label">дн</span></div>
+                        <div class="timer-unit"><span id="hours">--</span><span class="timer-label">ч</span></div>
+                        <div class="timer-unit"><span id="minutes">--</span><span class="timer-label">мин</span></div>
+                        <div class="timer-unit"><span id="seconds">--</span><span class="timer-label">сек</span></div>
+                    </div>
+                </div>
+                
+            </div>
+
+
+            <div class="card tips-card">
+                <h3>Советы по реализации</h3>
+                <ul>
+                    
+                    <li>Палиндром: <code>word == word[::-1]</code></li>
+                    <li>Читайте файлы с <code>encoding='utf-8'</code></li>
+                    <li>Сортируйте списки слов перед записью в файлы</li>
+                </ul>
+            </div>
+
+            <div class="card fact-card">
+                <h3>Интересный факт</h3>
+                <p>По оценкам филологов, словарный запас Пушкина составляет около <strong>21 000–25 000 слов</strong>.</p>
+                <p style="margin-top: 15px; font-style: italic;">Сможет ли ваша программа подтвердить эти данные?</p>
+            </div>
+
+            <div class="card check-card">
+                <h3>Проверка результатов</h3>
+                <div class="check-form">
+                    <div class="form-group">
+                        <label>Общее количество слов:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="totalWords" placeholder="Введите число">
+                            <span id="totalWordsStatus" class="status-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Количество уникальных слов:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="uniqueWords" placeholder="Введите число">
+                            <span id="uniqueWordsStatus" class="status-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Коротких слов (1–3 буквы):</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="shortWords" placeholder="Введите число">
+                            <span id="shortWordsStatus" class="status-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Средних слов (4–7 букв):</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="mediumWords" placeholder="Введите число">
+                            <span id="mediumWordsStatus" class="status-icon"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Длинных слов (8+ букв):</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="longWords" placeholder="Введите число">
+                            <span id="longWordsStatus" class="status-icon"></span>
+                        </div>
+                    </div>
+                    <button class="check-button" onclick="validateAll()">
+                        [ПРОВЕРИТЬ ВСЁ] Итоговая проверка
+                    </button>
+                    <div id="resultMessage" class="result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const encryptedAnswers = "eyJ0b3RhbFdvcmRzIjozOTQwNiwidW5pcXVlV29yZHMiOjEyMTA4LCJzaG9ydFdvcmRzIjo0MTIwLCJtZWRpdW1Xb3JkcyI6NjE4MywibG9uZ1dvcmRzIjoxODA1fQ==";
+    
+        function decryptAnswers() {
+            try {
+                return JSON.parse(atob(encryptedAnswers));
+            } catch (e) {
+                console.error("Ошибка расшифровки:", e);
+                return {};
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            const expected = decryptAnswers();
+            if (Object.keys(expected).length === 0) {
+                console.warn("Не удалось загрузить правильные ответы!");
+                return;
+            }
+    
+            const fields = ['totalWords', 'uniqueWords', 'shortWords', 'mediumWords', 'longWords'];
+    
+            fields.forEach(id => {
+                const input = document.getElementById(id);
+                const statusEl = document.getElementById(id + 'Status');
+    
+                if (!input || !statusEl) {
+                    console.warn("Элемент не найден:", id);
+                    return;
+                }
+    
+                const check = () => {
+                    const val = input.value.trim();
+                    const num = val ? parseInt(val, 10) : NaN;
+                    const correct = expected[id];
+    
+                    if (isNaN(num)) {
+                        statusEl.textContent = '';
+                    } else if (num === correct) {
+                        statusEl.textContent = '✅';
+                        statusEl.style.color = '#28a745';
+                    } else {
+                        statusEl.textContent = '❌';
+                        statusEl.style.color = '#dc3545';
+                    }
+                };
+    
+                input.addEventListener('input', check);
+                input.addEventListener('blur', check);
+            });
+
+            // Таймер до 13:00 16 октября 2025
+            const deadline = new Date('2025-10-16T13:00:00').getTime(); // Учитываем московское время (UTC+3)
+
+            function updateTimer() {
+                const now = new Date().getTime();
+                const diff = deadline - now;
+
+                if (diff <= 0) {
+                    document.getElementById('countdown-timer').innerHTML = '<div style="color:#e74c3c;font-size:1.3em;">Время вышло!</div>';
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = String(days).padStart(2, '0');
+                document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        });
+    
+        function validateAll() {
+            const expected = decryptAnswers();
+            const ids = ['totalWords', 'uniqueWords', 'shortWords', 'mediumWords', 'longWords'];
+            let allCorrect = true;
+    
+            for (const id of ids) {
+                const val = document.getElementById(id)?.value.trim();
+                const num = val ? parseInt(val, 10) : NaN;
+                if (num !== expected[id]) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+    
+            const msg = document.getElementById('resultMessage');
+            if (allCorrect) {
+                msg.textContent = '[УСПЕХ] Все значения верны!';
+                msg.className = 'result success';
+            } else {
+                msg.textContent = '[ОШИБКА] Есть неверные значения.';
+                msg.className = 'result error';
+            }
+            msg.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
