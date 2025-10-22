@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок #3: Циклы в Python (while)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #212529;
+            --text-light: #6c757d;
+            --border-radius: 16px;
+            --shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+    
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+    
+        /* === ФОН С ПАДАЮЩИМИ СИМВОЛАМИ === */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.03) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(76, 201, 240, 0.03) 0%, transparent 20%);
+            z-index: -2;
+            pointer-events: none;
+        }
+    
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+    
+        /* === ОСНОВНОЙ КОНТЕНТ === */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf9 100%);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+    
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+        }
+    
+        /* === ПЛАВНОЕ ПОЯВЛЕНИЕ ЗАДАЧ === */
+        .task {
+            background: #f9fbfd;
+            padding: 20px;
+            margin: 16px 0;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 8px rgba(67, 97, 238, 0.08);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+    
+        .task.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    
+        /* === ОСТАЛЬНЫЕ СТИЛИ (без изменений) === */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e9ecef;
+            color: var(--text);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background: #dee2e6;
+            transform: translateX(-4px);
+        }
+    
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+            color: var(--secondary);
+        }
+    
+        p.intro {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 32px;
+            font-size: 1.05rem;
+        }
+    
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 36px 0 20px;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+    
+        h2 img {
+            width: 28px;
+            height: 28px;
+        }
+    
+        .task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.12);
+        }
+    
+        .task h3 {
+            margin: 12px 0 12px;
+            font-size: 1.2rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    
+        .task ul {
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+    
+        .task li {
+            margin-bottom: 6px;
+        }
+    
+        pre {
+            font-family: 'JetBrains Mono', monospace;
+            background: #2b2d42;
+            color: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            margin-top: 12px;
+        }
+    
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            background: #eef2ff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            color: var(--secondary);
+        }
+    
+        .task.task-basic { border-left-color: #27ae60; background: #f0fff4; }
+        .task.task-medium { border-left-color: #f39c12; background: #fff9f0; }
+        .task.task-hard { border-left-color: #e74c3c; background: #fdf7f7; }
+    
+        .level-header {
+            margin-top: 32px;
+            padding: 12px 0 8px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .level-header.basic { color: #27ae60; }
+        .level-header.medium { color: #f39c12; }
+        .level-header.hard { color: #e74c3c; }
+    
+        /* Тест и остальное — без изменений */
+        .test-container { margin-top: 30px; }
+        .test-question {
+            display: none;
+            padding: 24px;
+            background: #f9fbfd;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .test-question.active { display: block; }
+        .test-question label {
+            display: block;
+            margin: 12px 0;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e0e6f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .test-question label:hover {
+            border-color: var(--primary-light);
+            background: #f0f5ff;
+        }
+        .test-question input[type="radio"] {
+            margin-right: 10px;
+            accent-color: var(--primary);
+        }
+        .test-controls { text-align: center; margin-top: 20px; }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            margin: 5px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(63, 55, 201, 0.4);
+        }
+        button:disabled {
+            background: #b0b0b0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #result {
+            margin-top: 24px;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            display: none;
+        }
+        #result.show {
+            display: block;
+            animation: pulse 0.6s ease;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            font-weight: 500;
+            display: none;
+        }
+        .password-box {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .password-box h2 {
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+        .password-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+        .password-box button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            margin-top: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+        }
+        .password-box button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Экран ввода пароля -->
+<div id="passwordScreen">
+    <div class="password-box">
+        <h2>🔒 Доступ к уроку</h2>
+        <p>Введите пароль для продолжения:</p>
+        <input type="password" id="passwordInput" placeholder="Пароль">
+        <button onclick="checkPassword()">Войти</button>
+        <div id="passwordError" class="error">Неверный пароль!</div>
+    </div>
+</div>
+
+<!-- Основной контент (изначально скрыт) -->
+<div class="container" id="mainContent" style="display:none;">
+
+    <a href="javascript:history.back()" class="back-btn">← Назад</a>
+
+    <h1>Урок #3: Циклы в Python (while)</h1>
+    <p class="intro">Научитесь повторять действия с помощью цикла <code>while</code> — основного инструмента для создания игр, симуляций и интерактивных программ!</p>
+
+    <!-- === ТЕОРИЯ === -->
+    <h2>📚 Цикл while</h2>
+
+    <div class="task task-basic">
+        <p>Цикл <code>while</code> выполняет блок кода <strong>пока условие истинно</strong>. Как только условие становится ложным — цикл останавливается.</p>
+        <pre>
+count = 0
+while count < 3:
+    print("Привет!")
+    count = count + 1</pre>
+        <p>Выведет "Привет!" три раза. Обратите внимание: переменная <code>count</code> обязательно должна изменяться внутри цикла!</p>
+    </div>
+
+    <div class="task task-hard">
+        <p><strong>⚠️ Осторожно!</strong> Если забыть изменить переменную в теле цикла, получится <em>бесконечный цикл</em> — программа зависнет!</p>
+        <pre>
+# ПЛОХО! Бесконечный цикл:
+while True:
+    print("Помогите!")  # Никогда не остановится</pre>
+    </div>
+
+    <div class="task" style="border-left-color: #9b59b6; background: #f8f5ff;">
+        <h3>🐍 Интересный факт</h3>
+        <p>Цикл <code>while</code> — один из самых древних управляющих конструкций в программировании. Он позволяет реализовать любую логику повторения, даже если заранее неизвестно, сколько раз нужно повторить действие.</p>
+    </div>
+
+    <div class="task" style="border-left-color: #2980b9; background: #f0f7ff;">
+        <h3>💡 Советы по циклу while</h3>
+        <ul>
+            <li>Всегда проверяйте, что условие цикла рано или поздно станет <code>False</code>.</li>
+            <li>Используйте <code>break</code>, чтобы досрочно выйти из цикла (например, при вводе "стоп").</li>
+            <li>Используйте <code>continue</code>, чтобы пропустить остаток текущей итерации и перейти к проверке условия.</li>
+        </ul>
+    </div>
+
+    <!-- === ЗАДАЧИ === -->
+    <h2>🎯 Задачи по уровням сложности</h2>
+
+    <!-- БАЗОВЫЙ УРОВЕНЬ -->
+    <h3 class="level-header basic">🟢 Базовый уровень</h3>
+
+    <div class="task task-basic">
+        <h3>Задача 1: Бесконечный попрошайка</h3>
+        <p>Пользователь застрял в цикле! Программа постоянно спрашивает "Выйти? (да/нет): ", и выходит только в том случае, если пользователь введет "да". Во всех остальных случаях (включая "нет", "возможно" и т.д.) цикл продолжается.</p>
+        <p>Подсказка: Используйте оператор != (не равно).</p>
+    </div>
+
+    <div class="task task-basic">
+        <h3>Задача 2: Обратный отсчет</h3>
+        <p>Пользователь вводит целое положительное число N. Программа запускает обратный отсчет от этого числа до 1, а затем выводит "Старт!".</p>
+        <p>Пример:<br>
+            Ввод: 5<br>
+            Вывод:<br>
+            5<br>
+            4<br>
+            3<br>
+            2<br>
+            1<br>
+            Старт!
+        </p>
+    </div>
+
+    <!-- СРЕДНИЙ УРОВЕНЬ -->
+    <h3 class="level-header medium">🟡 Средний уровень</h3>
+
+    <div class="task task-medium">
+        <h3>Задача 3: Угадай число</h3>
+        <p>Компьютер "загадывает" случайное число от 1 до 100. Пользователь пытается угадать его. Программа дает подсказки "Больше" или "Меньше". Цикл продолжается, пока число не будет угадано. В конце программа сообщает количество попыток.</p>
+        <p>Подсказка: Для генерации случайного числа в Python используется <code>import random</code> и затем <code>random.randint(1, 100)</code>.</p>
+    </div>
+
+    <div class="task task-medium">
+        <h3>Задача 4: Последовательность Сиракуэз (Гипотеза Коллатца)</h3>
+        <p>Пользователь вводит любое натуральное число. Программа строит из него последовательность по следующим правилам (пока число не станет равно 1):</p>
+        <ul>
+            <li>Если число четное, делим его на 2.</li>
+            <li>Если число нечетное, умножаем его на 3 и прибавляем 1.</li>
+        </ul>
+        <p>Программа должна выводить все числа последовательности и их длину (количество шагов до единицы).</p>
+        <p>Пример для числа 6: 6 → 3 → 10 → 5 → 16 → 8 → 4 → 2 → 1. Длина: 9 шагов.</p>
+        <p>Цель: Познакомить с известной математической гипотезой и поработать с условиями.</p>
+    </div>
+
+    <div class="task task-medium">
+        <h3>Задача 7: "Камень, Ножницы, Бумага" до первой победы</h3>
+        <p>Программа играет с пользователем в "Камень, Ножницы, Бумагу". Цикл повторяется, пока одна из сторон (пользователь или компьютер) не одержит 3 победы (не обязательно подряд). После каждого раунда программа выводит текущий счет.</p>
+    </div>
+
+    <!-- ПОВЫШЕННЫЙ УРОВЕНЬ -->
+    <h3 class="level-header hard">🔴 Повышенный уровень</h3>
+
+<div class="task task-hard">
+    <h3>Задача 5 🏆: Игра "21" (упрощенная)</h3>
+    <p>Компьютер и пользователь по очереди берут от 1 до 3 конфет из кучки, которая изначально содержит 21 конфету. Проигрывает тот, кто возьмет последнюю конфету. Сначала напишите программу для игры двух людей, где компьютер просто выводит текущее количество конфет и просит сделать ход.</p>
+    <p><strong>Усложнение:</strong> Реализуйте "умного" противника — компьютер, который всегда стремится оставить игроку количество конфет, кратное 4.</p>
+    <p>Цель: Создание простой игровой логики.</p>
+    <p><strong>Пример работы (базовая версия):</strong></p>
+    <pre>
+В кучке 21 конфета.
+Ход игрока 1: Сколько конфет взять (1-3)? 2
+Осталось 19 конфет.
+Ход игрока 2: Сколько конфет взять (1-3)? 3
+Осталось 16 конфет.
+...
+Ход игрока 1: Сколько конфет взять (1-3)? 1
+Осталось 1 конфета.
+Ход игрока 2: Сколько конфет взять (1-3)? 1
+Игрок 2 взял последнюю конфету и проиграл!</pre>
+</div>
+
+<div class="task task-hard">
+    <h3>Задача 6 🏆: Симулятор спортивного комментатора</h3>
+    <p>Программа симулирует матч между двумя командами. Счет начинается с 0:0. В цикле с каждой итерацией ("минутой матча") с небольшой вероятностью забивает одна из команд. Цикл длится, пока не истекут "90 минут" или пока не будет забито 5 голов. После каждого гола программа выводит текущий счет и "имя забившего" (случайным образом выбранное из списка).</p>
+    <p><strong>Пример работы:</strong></p>
+    <pre>
+Минута 7: Гол! Счёт 1:0. Забил: Иванов!
+Минута 23: Гол! Счёт 1:1. Забил: Петров!
+Минута 45: Гол! Счёт 2:1. Забил: Сидоров!
+Минута 68: Гол! Счёт 2:2. Забил: Кузнецов!
+Минута 82: Гол! Счёт 3:2. Забил: Васильев!
+Матч завершён! Итоговый счёт: 3:2</pre>
+    <p>Подсказка: используйте <code>random.random() < 0.05</code> для 5% шанса гола на каждой минуте.</p>
+</div>
+
+    <!-- === ТЕСТ === -->
+    <h2>
+        <img src="https://cdn-icons-png.flaticon.com/512/3051/3051303.png" alt="Тест" style="vertical-align:middle;">
+        Тест по уроку
+    </h2>
+    <p style="text-align: center; color: var(--text-light); margin-bottom: 20px;">Ответьте на 5 вопросов. Вернуться к предыдущим вопросам нельзя!</p>
+
+    <div class="test-container">
+        <div class="test-question active" data-question="1">
+            <p><strong>1. Какой цикл используется, когда заранее неизвестно, сколько раз нужно повторить действие?</strong></p>
+            <label><input type="radio" name="q1" value="a"> for</label>
+            <label><input type="radio" name="q1" value="b"> while</label>
+            <label><input type="radio" name="q1" value="c"> if</label>
+            <label><input type="radio" name="q1" value="d"> def</label>
+        </div>
+
+        <div class="test-question" data-question="2">
+            <p><strong>2. Что выведет этот код?<br><code>i = 3<br>while i > 0:<br>&nbsp;&nbsp;&nbsp;&nbsp;print(i)<br>&nbsp;&nbsp;&nbsp;&nbsp;i = i - 1</code></strong></p>
+            <label><input type="radio" name="q2" value="a"> 3 2 1</label>
+            <label><input type="radio" name="q2" value="b"> 2 1 0</label>
+            <label><input type="radio" name="q2" value="c"> 3 2 1 0</label>
+            <label><input type="radio" name="q2" value="d"> Бесконечный цикл</label>
+        </div>
+
+        <div class="test-question" data-question="3">
+            <p><strong>3. Как прервать выполнение цикла <code>while</code> досрочно?</strong></p>
+            <label><input type="radio" name="q3" value="a"> stop</label>
+            <label><input type="radio" name="q3" value="b"> exit</label>
+            <label><input type="radio" name="q3" value="c"> break</label>
+            <label><input type="radio" name="q3" value="d"> return</label>
+        </div>
+
+        <div class="test-question" data-question="4">
+            <p><strong>4. Что произойдёт, если в цикле <code>while</code> не изменять переменную условия?</strong></p>
+            <label><input type="radio" name="q4" value="a"> Цикл выполнится один раз</label>
+            <label><input type="radio" name="q4" value="b"> Программа завершится с ошибкой</label>
+            <label><input type="radio" name="q4" value="c"> Бесконечный цикл</label>
+            <label><input type="radio" name="q4" value="d"> Ничего страшного — Python сам остановит</label>
+        </div>
+
+        <div class="test-question" data-question="5">
+            <p><strong>5. Какой оператор позволяет пропустить остаток текущей итерации и сразу перейти к проверке условия?</strong></p>
+            <label><input type="radio" name="q5" value="a"> skip</label>
+            <label><input type="radio" name="q5" value="b"> pass</label>
+            <label><input type="radio" name="q5" value="c"> continue</label>
+            <label><input type="radio" name="q5" value="d"> next</label>
+        </div>
+
+        <div class="test-controls">
+            <button id="nextBtn" onclick="nextOrSubmit()">Далее →</button>
+            <button id="submitBtn" onclick="submitTest()" style="display:none;">Завершить тест</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+</div>
+
+<script>
+    // === ФОН "МАТРИЦА" ===
+    function initMatrixRain() {
+        const canvas = document.createElement('canvas');
+        canvas.className = 'matrix-rain';
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+
+        let w, h;
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Только 0 и 1 для минимализма
+        const chars = "01";
+        const fontSize = 14;
+        const columns = Math.floor(w / fontSize);
+        const drops = [];
+
+        // Инициализируем позиции
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * h / fontSize);
+        }
+
+        function draw() {
+            // Полупрозрачный фон для "следа"
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.fillStyle = '#4361ee';
+            ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                // Сбрасываем каплю с небольшой вероятностью
+                if (drops[i] * fontSize > h && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    }
+
+    // === ПОЯВЛЕНИЕ ЗАДАЧ ===
+    function showTasks() {
+        const tasks = document.querySelectorAll('.task');
+        tasks.forEach((task, i) => {
+            // Появляем с небольшой задержкой
+            setTimeout(() => {
+                task.classList.add('visible');
+            }, i * 100);
+        });
+    }
+
+    // === ЗАПУСК ПОСЛЕ ВХОДА ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // Если экран пароля скрыт — запускаем сразу
+        if (document.getElementById('mainContent').style.display === 'block') {
+            initMatrixRain();
+            showTasks();
+        } else {
+            // Иначе ждём, пока пользователь войдёт
+            const observer = new MutationObserver(() => {
+                if (document.getElementById('mainContent').style.display === 'block') {
+                    initMatrixRain();
+                    showTasks();
+                    observer.disconnect();
+                }
+            });
+            observer.observe(document.getElementById('mainContent'), { attributes: true, attributeFilter: ['style'] });
+        }
+    });
+
+    // === ФУНКЦИИ ПАРОЛЯ И ТЕСТА (оставьте как есть) ===
+    const encryptedPassword = "cHl0aG9uMjAyNQ==";
+    function decryptPassword() {
+        try { return atob(encryptedPassword); } catch (e) { return ""; }
+    }
+    function checkPassword() {
+        const input = document.getElementById("passwordInput").value;
+        const correct = decryptPassword();
+        const errorEl = document.getElementById("passwordError");
+        if (input === correct) {
+            document.getElementById("passwordScreen").style.display = "none";
+            document.getElementById("mainContent").style.display = "block";
+        } else {
+            errorEl.style.display = "block";
+            setTimeout(() => errorEl.style.display = "none", 2000);
+        }
+    }
+
+    const encryptedAnswers = "eyJxMSI6ImIiLCJxMiI6ImEiLCJxMyI6ImMiLCJxNCI6ImMiLCJxNSI6ImMifQ==";
+    function decryptAnswers() {
+        try { return JSON.parse(atob(encryptedAnswers)); } catch (e) { return {}; }
+    }
+
+    let currentQuestion = 1;
+    const totalQuestions = 5;
+
+    function nextOrSubmit() {
+        const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+        if (!selected) { alert("Пожалуйста, выберите ответ!"); return; }
+        if (currentQuestion < totalQuestions) {
+            document.querySelector(`.test-question[data-question="${currentQuestion}"]`).classList.remove('active');
+            currentQuestion++;
+            document.querySelector(`.test-question[data-question="${currentQuestion}"]`).classList.add('active');
+            if (currentQuestion === totalQuestions) {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+    }
+
+    function submitTest() {
+        const answers = decryptAnswers();
+        if (Object.keys(answers).length === 0) { alert("Не удалось загрузить правильные ответы!"); return; }
+        let score = 0;
+        for (let i = 1; i <= totalQuestions; i++) {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            if (selected && selected.value === answers[`q${i}`]) score++;
+        }
+        const resultEl = document.getElementById('result');
+        const percent = Math.round((score / totalQuestions) * 100);
+        let message = `Вы набрали ${score} из ${totalQuestions} (${percent}%)<br>`;
+        if (score === totalQuestions) {
+            message += "Отлично! Вы мастер циклов while! 🎉";
+            resultEl.style.backgroundColor = '#d4edda'; resultEl.style.color = '#155724';
+        } else if (score >= 3) {
+            message += "Хорошо! Почти идеально. Продолжайте в том же духе!";
+            resultEl.style.backgroundColor = '#fff3cd'; resultEl.style.color = '#856404';
+        } else {
+            message += "Повторите тему и попробуйте снова!";
+            resultEl.style.backgroundColor = '#f8d7da'; resultEl.style.color = '#721c24';
+        }
+        resultEl.innerHTML = message;
+        resultEl.classList.add('show');
+    }
+</script>
+</body>
+</html>
