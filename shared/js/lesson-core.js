@@ -1,47 +1,62 @@
-// === НОВОГОДНИЙ СНЕГ ИЗ СИМВОЛОВ ===
+// === НОВОГОДНИЙ СНЕГ (устойчивый к ошибкам) ===
 function initSnow() {
+    const mainContent = document.getElementById("mainContent");
+    if (!mainContent || getComputedStyle(mainContent).display === "none") {
+        // Если контент ещё не виден — ждём
+        setTimeout(initSnow, 100);
+        return;
+    }
+
+    // Удаляем старый снег, если есть
+    const oldSnow = document.querySelector('.snowfall');
+    if (oldSnow) oldSnow.remove();
+
     const canvas = document.createElement('canvas');
     canvas.className = 'snowfall';
     document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d');
 
-    let w, h;
-    function resize() {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.warn("Не удалось создать canvas для снега");
+        return;
+    }
+
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+
+    const resize = () => {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
-    }
+    };
     window.addEventListener('resize', resize);
     resize();
 
     const flakes = [];
-    const symbols = "❄*+."; // Снежинки, звёзды, снежинки-плюсы и точки
-    const total = 120;
+    const symbols = "❄*+.";
+    const total = 100;
 
     for (let i = 0; i < total; i++) {
         flakes.push({
             x: Math.random() * w,
             y: Math.random() * h,
-            size: Math.random() * 4 + 1,
-            speed: Math.random() * 1.2 + 0.3,
+            speed: Math.random() * 1 + 0.5,
             char: symbols[Math.floor(Math.random() * symbols.length)],
             opacity: Math.random() * 0.7 + 0.3
         });
     }
 
-    function draw() {
+    const draw = () => {
         ctx.clearRect(0, 0, w, h);
         ctx.font = "16px 'JetBrains Mono', monospace";
 
         flakes.forEach(flake => {
-            // Снежинки — золотые, остальное — белое с прозрачностью
             if (flake.char === '❄') {
-                ctx.fillStyle = `rgba(255, 215, 0, ${flake.opacity})`; // Золото
+                ctx.fillStyle = `rgba(255, 215, 0, ${flake.opacity})`;
             } else {
-                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity * 0.9})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
             }
             ctx.fillText(flake.char, flake.x, flake.y);
             flake.y += flake.speed;
-            // Сбоку — волнистое движение для мультяшности
             flake.x += Math.sin(flake.y * 0.02) * 0.5;
             if (flake.y > h) {
                 flake.y = -10;
@@ -49,54 +64,60 @@ function initSnow() {
             }
         });
         requestAnimationFrame(draw);
-    }
+    };
 
     draw();
 }
 
-// === ПОЛУЧЕНИЕ ПАРОЛЯ ИЗ МЕТА-ТЕГА ===
+// === ПОЛУЧЕНИЕ ПАРОЛЯ ===
 function getLessonPassword() {
     const meta = document.querySelector('meta[name="lesson-password"]');
     if (!meta || !meta.getAttribute('content')) {
-        throw new Error('Не задан пароль урока. Добавьте: <meta name="lesson-password" content="base64_пароль">');
+        throw new Error('Не задан пароль урока');
     }
     return meta.getAttribute('content');
 }
 
-// === ПРОВЕРКА ПАРОЛЯ ===
+// === ПРОВЕРКА ПАРОЛЯ (надёжная) ===
 function checkPassword() {
-    const inputEl = document.getElementById("passwordInput");
-    const errorEl = document.getElementById("passwordError");
-    
-    if (!inputEl || !errorEl) {
-        console.error("Элементы ввода пароля не найдены");
+    const passwordScreen = document.getElementById("passwordScreen");
+    const mainContent = document.getElementById("mainContent");
+    const passwordInput = document.getElementById("passwordInput");
+    const passwordError = document.getElementById("passwordError");
+
+    // Проверка наличия всех элементов
+    if (!passwordScreen || !mainContent || !passwordInput || !passwordError) {
+        alert("Ошибка: не удалось загрузить интерфейс урока. Обновите страницу.");
         return;
     }
 
-    const userInput = inputEl.value.trim();
-    let correctPassword = "";
+    const userInput = passwordInput.value.trim();
+    if (!userInput) {
+        passwordError.style.display = "block";
+        setTimeout(() => passwordError.style.display = "none", 2000);
+        return;
+    }
 
+    let correctPassword = "";
     try {
-        const encrypted = getLessonPassword();
-        correctPassword = atob(encrypted);
+        correctPassword = atob(getLessonPassword());
     } catch (e) {
-        alert("Ошибка инициализации урока: " + e.message);
+        alert("Ошибка: некорректный пароль урока.");
         return;
     }
 
     if (userInput === correctPassword) {
-        document.getElementById("passwordScreen")?.style.display = "none";
-        document.getElementById("mainContent")?.style.display = "block";
-        initSnow(); // Запускаем снег!
+        passwordScreen.style.display = "none";
+        mainContent.style.display = "block";
+        // Запускаем снег с небольшой задержкой
+        setTimeout(initSnow, 100);
     } else {
-        errorEl.style.display = "block";
-        setTimeout(() => {
-            errorEl.style.display = "none";
-        }, 2000);
+        passwordError.style.display = "block";
+        setTimeout(() => passwordError.style.display = "none", 2000);
     }
 }
 
-// === АККОРДЕОН ДЛЯ ЗАДАЧ ===
+// === АККОРДЕОН ===
 function toggleAccordion(header) {
     const content = header.nextElementSibling;
     const isActive = header.classList.contains('active');
@@ -104,59 +125,49 @@ function toggleAccordion(header) {
     document.querySelectorAll('.accordion-header').forEach(h => {
         if (h !== header) {
             h.classList.remove('active');
-            const otherContent = h.nextElementSibling;
-            if (otherContent) {
-                otherContent.classList.remove('expanded');
-            }
+            const c = h.nextElementSibling;
+            if (c) c.classList.remove('expanded');
         }
     });
 
     if (isActive) {
         header.classList.remove('active');
-        content?.classList.remove('expanded');
+        if (content) content.classList.remove('expanded');
     } else {
         header.classList.add('active');
-        content?.classList.add('expanded');
+        if (content) content.classList.add('expanded');
     }
 }
 
-// === ПОЛУЧЕНИЕ ОТВЕТОВ ИЗ BASE64-СТРОКИ В HTML ===
+// === ОТВЕТЫ НА ТЕСТ (из base64) ===
 function getTestAnswers() {
-    const scriptEl = document.getElementById('lesson-answers');
-    if (!scriptEl) {
-        throw new Error('Не найден блок с ответами. Добавьте: <script type="application/json" id="lesson-answers">base64_ответы</script>');
+    const script = document.getElementById('lesson-answers');
+    if (!script) {
+        throw new Error('Не найден блок с ответами');
     }
-
-    const base64Str = (scriptEl.textContent || scriptEl.innerText).trim();
-    if (!base64Str) {
-        throw new Error('Блок с ответами пуст');
-    }
-
+    const base64 = (script.textContent || script.innerText).trim();
+    if (!base64) throw new Error('Блок с ответами пуст');
     try {
-        const jsonString = atob(base64Str);
-        return JSON.parse(jsonString);
+        return JSON.parse(atob(base64));
     } catch (e) {
-        console.error("Ошибка обработки ответов:", e);
-        throw new Error("Некорректный формат ответов на тест (ожидается base64-encoded JSON)");
+        throw new Error('Некорректный формат ответов');
     }
 }
 
-// === ЛОГИКА ТЕСТА ===
+// === ТЕСТ ===
 let currentQuestion = 1;
 const totalQuestions = 5;
 
 function nextOrSubmit() {
     const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
     if (!selected) {
-        alert("Пожалуйста, выберите ответ, эльф! 🧝‍♂️");
+        alert("Пожалуйста, выберите ответ!");
         return;
     }
-
     if (currentQuestion < totalQuestions) {
         document.querySelector(`.test-question[data-question="${currentQuestion}"]`)?.classList.remove('active');
         currentQuestion++;
         document.querySelector(`.test-question[data-question="${currentQuestion}"]`)?.classList.add('active');
-
         if (currentQuestion === totalQuestions) {
             document.getElementById('nextBtn')?.style.display = 'none';
             document.getElementById('submitBtn')?.style.display = 'inline-block';
@@ -164,38 +175,29 @@ function nextOrSubmit() {
     }
 }
 
-// === АНИМАЦИЯ +1 (теперь золотая и с искрами!) ===
+// === АНИМАЦИЯ +1 ===
 function createPlusOne(x, y) {
     const plusOne = document.createElement('div');
     plusOne.className = 'plus-one';
     plusOne.textContent = '+1';
     plusOne.style.left = x + 'px';
     plusOne.style.top = y + 'px';
-    plusOne.style.color = '#ffd700'; // Золотой цвет
-    plusOne.style.textShadow = '0 0 8px rgba(255, 215, 0, 0.8)';
     const container = document.getElementById('testContainer');
     if (container) {
         container.appendChild(plusOne);
         setTimeout(() => {
-            if (plusOne.parentNode) {
-                plusOne.parentNode.removeChild(plusOne);
-            }
+            if (plusOne.parentNode) plusOne.parentNode.removeChild(plusOne);
         }, 1200);
     }
 }
 
-// === ОТПРАВКА ТЕСТА С НОВОГОДНИМИ СООБЩЕНИЯМИ ===
+// === ОТПРАВКА ТЕСТА ===
 function submitTest() {
     let answers = {};
     try {
         answers = getTestAnswers();
     } catch (e) {
         alert(e.message);
-        return;
-    }
-
-    if (Object.keys(answers).length === 0) {
-        alert("Нет данных с правильными ответами!");
         return;
     }
 
@@ -234,6 +236,5 @@ function submitTest() {
     }
 
     resultEl.innerHTML = message;
-    resultEl.classList.add('show');
     resultEl.style.display = 'block';
 }
