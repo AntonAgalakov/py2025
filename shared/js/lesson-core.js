@@ -1,13 +1,11 @@
-// === НОВОГОДНИЙ СНЕГ (устойчивый к ошибкам) ===
+// === НОВОГОДНИЙ СНЕГ ===
 function initSnow() {
     const mainContent = document.getElementById("mainContent");
     if (!mainContent || getComputedStyle(mainContent).display === "none") {
-        // Если контент ещё не виден — ждём
         setTimeout(initSnow, 100);
         return;
     }
 
-    // Удаляем старый снег, если есть
     const oldSnow = document.querySelector('.snowfall');
     if (oldSnow) oldSnow.remove();
 
@@ -16,26 +14,20 @@ function initSnow() {
     document.body.appendChild(canvas);
 
     const ctx = canvas.getContext('2d');
-    if (!ctx) {
-        console.warn("Не удалось создать canvas для снега");
-        return;
-    }
+    if (!ctx) return;
 
-    let w = window.innerWidth;
-    let h = window.innerHeight;
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
 
     const resize = () => {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
     };
     window.addEventListener('resize', resize);
-    resize();
 
     const flakes = [];
     const symbols = "❄*+.";
-    const total = 100;
-
-    for (let i = 0; i < total; i++) {
+    for (let i = 0; i < 100; i++) {
         flakes.push({
             x: Math.random() * w,
             y: Math.random() * h,
@@ -48,13 +40,10 @@ function initSnow() {
     const draw = () => {
         ctx.clearRect(0, 0, w, h);
         ctx.font = "16px 'JetBrains Mono', monospace";
-
         flakes.forEach(flake => {
-            if (flake.char === '❄') {
-                ctx.fillStyle = `rgba(255, 215, 0, ${flake.opacity})`;
-            } else {
-                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
-            }
+            ctx.fillStyle = flake.char === '❄' 
+                ? `rgba(255, 215, 0, ${flake.opacity})` 
+                : `rgba(255, 255, 255, ${flake.opacity})`;
             ctx.fillText(flake.char, flake.x, flake.y);
             flake.y += flake.speed;
             flake.x += Math.sin(flake.y * 0.02) * 0.5;
@@ -65,103 +54,84 @@ function initSnow() {
         });
         requestAnimationFrame(draw);
     };
-
     draw();
 }
 
-// === ПОЛУЧЕНИЕ ПАРОЛЯ ===
+// === ПАРОЛЬ ===
 function getLessonPassword() {
     const meta = document.querySelector('meta[name="lesson-password"]');
-    if (!meta || !meta.getAttribute('content')) {
-        throw new Error('Не задан пароль урока');
-    }
-    return meta.getAttribute('content');
+    return meta ? meta.getAttribute('content') : "cHl0aG9uMjAyNQ==";
 }
 
-// === ПРОВЕРКА ПАРОЛЯ (надёжная) ===
 function checkPassword() {
-    const passwordScreen = document.getElementById("passwordScreen");
-    const mainContent = document.getElementById("mainContent");
-    const passwordInput = document.getElementById("passwordInput");
-    const passwordError = document.getElementById("passwordError");
+    const ps = document.getElementById("passwordScreen");
+    const mc = document.getElementById("mainContent");
+    const pi = document.getElementById("passwordInput");
+    const pe = document.getElementById("passwordError");
 
-    // Проверка наличия всех элементов
-    if (!passwordScreen || !mainContent || !passwordInput || !passwordError) {
-        alert("Ошибка: не удалось загрузить интерфейс урока. Обновите страницу.");
+    if (!ps || !mc || !pi || !pe) {
+        alert("Ошибка загрузки урока!");
         return;
     }
 
-    const userInput = passwordInput.value.trim();
-    if (!userInput) {
-        passwordError.style.display = "block";
-        setTimeout(() => passwordError.style.display = "none", 2000);
-        return;
-    }
-
-    let correctPassword = "";
+    const user = pi.value.trim();
+    let correct = "";
     try {
-        correctPassword = atob(getLessonPassword());
+        correct = atob(getLessonPassword());
     } catch (e) {
-        alert("Ошибка: некорректный пароль урока.");
-        return;
+        correct = "python2025";
     }
 
-    if (userInput === correctPassword) {
-        passwordScreen.style.display = "none";
-        mainContent.style.display = "block";
-        // Запускаем снег с небольшой задержкой
+    if (user === correct) {
+        ps.style.display = "none";
+        mc.style.display = "block";
         setTimeout(initSnow, 100);
     } else {
-        passwordError.style.display = "block";
-        setTimeout(() => passwordError.style.display = "none", 2000);
+        pe.style.display = "block";
+        setTimeout(() => pe.style.display = "none", 2000);
     }
 }
 
 // === АККОРДЕОН ===
-function toggleAccordion(header) {
-    const content = header.nextElementSibling;
-    const isActive = header.classList.contains('active');
-
-    document.querySelectorAll('.accordion-header').forEach(h => {
-        if (h !== header) {
-            h.classList.remove('active');
-            const c = h.nextElementSibling;
-            if (c) c.classList.remove('expanded');
+function toggleAccordion(h) {
+    const c = h.nextElementSibling;
+    const isActive = h.classList.contains('active');
+    
+    document.querySelectorAll('.accordion-header').forEach(el => {
+        if (el !== h) {
+            el.classList.remove('active');
+            const ec = el.nextElementSibling;
+            if (ec) ec.classList.remove('expanded');
         }
     });
 
     if (isActive) {
-        header.classList.remove('active');
-        if (content) content.classList.remove('expanded');
+        h.classList.remove('active');
+        if (c) c.classList.remove('expanded');
     } else {
-        header.classList.add('active');
-        if (content) content.classList.add('expanded');
-    }
-}
-
-// === ОТВЕТЫ НА ТЕСТ (из base64) ===
-function getTestAnswers() {
-    const script = document.getElementById('lesson-answers');
-    if (!script) {
-        throw new Error('Не найден блок с ответами');
-    }
-    const base64 = (script.textContent || script.innerText).trim();
-    if (!base64) throw new Error('Блок с ответами пуст');
-    try {
-        return JSON.parse(atob(base64));
-    } catch (e) {
-        throw new Error('Некорректный формат ответов');
+        h.classList.add('active');
+        if (c) c.classList.add('expanded');
     }
 }
 
 // === ТЕСТ ===
+function getTestAnswers() {
+    const script = document.getElementById('lesson-answers');
+    if (!script) return {};
+    try {
+        return JSON.parse(atob(script.textContent.trim()));
+    } catch (e) {
+        return {};
+    }
+}
+
 let currentQuestion = 1;
 const totalQuestions = 5;
 
 function nextOrSubmit() {
     const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
     if (!selected) {
-        alert("Пожалуйста, выберите ответ!");
+        alert("Выберите ответ!");
         return;
     }
     if (currentQuestion < totalQuestions) {
@@ -175,7 +145,6 @@ function nextOrSubmit() {
     }
 }
 
-// === АНИМАЦИЯ +1 ===
 function createPlusOne(x, y) {
     const plusOne = document.createElement('div');
     plusOne.className = 'plus-one';
@@ -191,16 +160,8 @@ function createPlusOne(x, y) {
     }
 }
 
-// === ОТПРАВКА ТЕСТА ===
 function submitTest() {
-    let answers = {};
-    try {
-        answers = getTestAnswers();
-    } catch (e) {
-        alert(e.message);
-        return;
-    }
-
+    const answers = getTestAnswers();
     let score = 0;
     const testContainer = document.getElementById('testContainer');
     const rect = testContainer ? testContainer.getBoundingClientRect() : { width: 400, height: 300 };
