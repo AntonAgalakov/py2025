@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Урок #6: Строки в Python</title>
+    <meta name="lesson-password" content="cHl0aG9uMjAyNQ==">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../shared/css/lesson-core.css">
+</head>
+<body>
+
+<div id="passwordScreen">
+    <div class="password-box">
+        <h2>🔒 Доступ к уроку</h2>
+        <p>Введите пароль для продолжения:</p>
+        <input type="password" id="passwordInput" placeholder="Пароль">
+        <button onclick="checkPassword()">Войти</button>
+        <div id="passwordError" class="error">Неверный пароль!</div>
+    </div>
+</div>
+
+<div class="container" id="mainContent" style="display:none;">
+    <a href="javascript:history.back()" class="back-btn">← Назад</a>
+
+    <h1>Урок #6: Строки в Python</h1>
+    <p class="intro">Освойте продвинутые методы работы со строками: фильтрация, кодирование, баланс скобок и многое другое. От простых манипуляций до сложных алгоритмов — всё начинается со строк!</p>
+
+    <!-- === ТЕОРИЯ === -->
+    <h2>📚 Теория: Строки в Python</h2>
+
+    <div class="theory-block">
+        <h3>1. Что такое строка?</h3>
+        <p>Строка — это упорядоченная неизменяемая последовательность символов, заключённая в кавычки:</p>
+        <pre>
+s = "Привет"
+t = 'Мир'</pre>
+        <p>Строки могут содержать буквы, цифры, знаки препинания, пробелы и спецсимволы.</p>
+        <p>В Python строки — <b>неизменяемые</b>: любая «модификация» создаёт новую строку.</p>
+    </div>
+
+    <div class="theory-block">
+        <h3>2. Индексы и срезы</h3>
+        <p>Каждый символ в строке имеет индекс (с 0):</p>
+        <pre>
+word = "Python"
+print(word[0])  # 'P'
+print(word[-1]) # 'n' (последний)</pre>
+        <p>Срезы — извлечение части строки:</p>
+        <pre>
+word[1:4]  # 'yth'
+word[:3]   # 'Pyt'
+word[3:]   # 'hon'
+word[::-1] # 'nohtyP' (реверс)</pre>
+    </div>
+
+    <div class="theory-block">
+        <h3>3. Полезные методы строк</h3>
+        <p>Python предоставляет десятки методов для работы со строками:</p>
+        <ul>
+            <li><code>.upper()</code>, <code>.lower()</code> — регистр</li>
+            <li><code>.strip()</code> — убрать пробелы по краям</li>
+            <li><code>.replace(old, new)</code> — замена</li>
+            <li><code>.split()</code> — разбить на список</li>
+            <li><code>.join(list)</code> — собрать из списка</li>
+            <li><code>.find()</code>, <code>.index()</code> — поиск</li>
+            <li><code>.count(sub)</code> — подсчёт вхождений</li>
+        </ul>
+        <pre>
+text = "  Привет, Мир!  "
+print(text.strip().upper())  # "ПРИВЕТ, МИР!"</pre>
+    </div>
+
+    <div class="theory-block">
+        <h3>4. Проверка содержимого</h3>
+        <p>Методы для проверки типа содержимого:</p>
+        <ul>
+            <li><code>.isdigit()</code> — только цифры?</li>
+            <li><code>.isalpha()</code> — только буквы?</li>
+            <li><code>.isalnum()</code> — буквы и/или цифры?</li>
+            <li><code>.isspace()</code> — только пробелы?</li>
+            <li><code>.startswith(pref)</code>, <code>.endswith(suff)</code></li>
+        </ul>
+        <pre>
+"123".isdigit()    # True
+"Hello".isalpha()  # True
+"Hello123".isalnum() # True</pre>
+    </div>
+
+    <div class="theory-block">
+        <h3>5. Форматирование строк</h3>
+        <p>Способы вставки переменных в строку:</p>
+        <p><b>1. f-строки (рекомендуется):</b></p>
+        <pre>
+name = "Алиса"
+age = 30
+print(f"Меня зовут {name}, мне {age} лет.")</pre>
+    </div>
+
+    <!-- === ЗАДАЧИ === -->
+    <h2>🎯 Задачи по уровням сложности</h2>
+
+    <h3 class="level-header basic">🟢 Базовый</h3>
+
+    <div class="accordion-item">
+        <div class="accordion-header basic" onclick="toggleAccordion(this)">
+            Задание 1: Цифровой фильтр
+        </div>
+        <div class="accordion-content basic">
+            <div class="accordion-content-inner">
+                <p>Напишите программу, которая получает на вход строку и удаляет из нее все цифры (символы от '0' до '9'). Все остальные символы (буквы, знаки препинания, пробелы) должны остаться на своих местах в исходном порядке.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "Hello123 World456!" → Выход: "Hello World!"</p>
+                    <p>Вход: "Мой номер: +7 (123) 456-78-90" → Выход: "Мой номер: + () --"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-header basic" onclick="toggleAccordion(this)">
+            Задание 2: Великий Переводчик на 'Питонячий' Язык
+        </div>
+        <div class="accordion-content basic">
+            <div class="accordion-content-inner">
+                <p>Реализуйте программу, которая преобразует слова по специальному правилу: после каждой гласной буквы русского алфавита (а, е, ё, и, о, у, ы, э, ю, я) вставляется слог, состоящий из буквы "с" и этой же гласной.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "привет" → Выход: "присивесет"</p>
+                    <p>Вход: "мама" → Выход: "масамаса"</p>
+                    <p>Вход: "Хорошо" → Выход: "Хосорошосо"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="level-header medium">🟡 Средний</h3>
+
+    <div class="accordion-item">
+        <div class="accordion-header medium" onclick="toggleAccordion(this)">
+            Задание 3: Найди лишний символ
+        </div>
+        <div class="accordion-content medium">
+            <div class="accordion-content-inner">
+                <p>Дана строка, в которой ровно один символ встречается нечетное число раз, а все остальные символы — четное количество раз. Найдите этот "лишний" символ.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "aabbc" → Выход: 'c'</p>
+                    <p>Вход: "1122334" → Выход: '4'</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="accordion-item">
+        <div class="accordion-header medium" onclick="toggleAccordion(this)">
+            Задание 4: Строки-друзья
+        </div>
+        <div class="accordion-content medium">
+            <div class="accordion-content-inner">
+                <p>Две строки одинаковой длины считаются "друзьями", если одну из них можно превратить в другую, изменив ровно один символ. Напишите функцию, которая принимает две строки и возвращает True, если они являются "друзьями", и False — в противном случае.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "abc", "axc" → Выход: True</p>
+                    <p>Вход: "hello", "hallo" → Выход: True</p>
+                    <p>Вход: "python", "python" → Выход: False</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="level-header medium">🟡 Повышенный</h3>
+
+    <div class="accordion-item">
+        <div class="accordion-header medium" onclick="toggleAccordion(this)">
+            Задание 5: Поиск пропавшей карточки
+        </div>
+        <div class="accordion-content medium">
+            <div class="accordion-content-inner">
+                <p>Для настольной игры используются карточки с номерами от 1 до N. Одна карточка потерялась. Вам дано число N (общее количество карточек), а затем последовательность из N-1 номера оставшихся карточек. Все оставшиеся номера — различные числа от 1 до N. Ваша программа должна определить номер потерянной карточки.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: 5 и 1 3 4 2 → Выход: 5</p>
+                    <p>Вход: 10 и 1 2 3 4 6 7 8 9 10 → Выход: 5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="level-header hard">🟠 Повышенный +</h3>
+
+    <div class="accordion-item">
+        <div class="accordion-header hard" onclick="toggleAccordion(this)">
+            Задание 6: Кодирование длин серий (RLE)
+        </div>
+        <div class="accordion-content hard">
+            <div class="accordion-content-inner">
+                <p>Реализуйте алгоритм сжатия RLE (Run-Length Encoding). На вход подается строка. Необходимо вернуть сжатую строку, где подряд идущие повторяющиеся символы (серии) заменяются на один символ и число его повторений. Если символ встречается только 1 раз подряд, число 1 не ставится.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "AAABBBCCXYZ" → Выход: "A3B3C2XYZ"</p>
+                    <p>Вход: "AAAABBBCCXYZDDDDAAA" → Выход: "A4B3C2XYZD4A3"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="level-header hard">🔴 Сложный</h3>
+
+    <div class="accordion-item">
+        <div class="accordion-header hard" onclick="toggleAccordion(this)">
+            Задание 7: Проверка скобочного баланса
+        </div>
+        <div class="accordion-content hard">
+            <div class="accordion-content-inner">
+                <p>Напишите программу, которая проверяет, правильно ли расставлены скобки в строке-формуле. Учитывайте не только парность скобок, но и их порядок (открывающая должна идти перед закрывающей). Рассматривайте скобки трех видов: круглые ( ), квадратные [ ] и фигурные { }.</p>
+                <div class="task-goal">
+                    <p>Примеры:</p>
+                    <p>Вход: "(a + [b * {c - d}])" → Выход: True</p>
+                    <p>Вход: "[(])" → Выход: False</p>
+                    <p>Вход: "({[}])" → Выход: False</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === ТЕСТ === -->
+    <h2>
+        <img src="    https://cdn-icons-png.flaticon.com/512/3051/3051303.png    " alt="Тест" style="vertical-align:middle;">
+        Тест по уроку
+    </h2>
+    <p style="text-align: center; color: var(--text-light); margin-bottom: 20px;">Ответьте на 5 вопросов о строках в Python.</p>
+
+    <div class="test-container" id="testContainer">
+        <div class="test-question active" data-question="1">
+            <p><strong>1. Как обратиться к последнему символу строки <code>s</code>?</strong></p>
+            <label><input type="radio" name="q1" value="a"> s[len(s)]</label>
+            <label><input type="radio" name="q1" value="b"> s[-1]</label>
+            <label><input type="radio" name="q1" value="c"> s[0]</label>
+            <label><input type="radio" name="q1" value="d"> s[last]</label>
+        </div>
+
+        <div class="test-question" data-question="2">
+            <p><strong>2. Что делает выражение <code>text[::-1]</code>?</strong></p>
+            <label><input type="radio" name="q2" value="a"> Удаляет первый символ</label>
+            <label><input type="radio" name="q2" value="b"> Разворачивает строку</label>
+            <label><input type="radio" name="q2" value="c"> Делает все буквы заглавными</label>
+            <label><input type="radio" name="q2" value="d"> Заменяет все пробелы на тире</label>
+        </div>
+
+        <div class="test-question" data-question="3">
+            <p><strong>3. Как узнать, сколько раз символ «а» встречается в строке <code>s</code>?</strong></p>
+            <label><input type="radio" name="q3" value="a"> s.find("а")</label>
+            <label><input type="radio" name="q3" value="b"> s.length("а")</label>
+            <label><input type="radio" name="q3" value="c"> s.count("а")</label>
+            <label><input type="radio" name="q3" value="d"> count(s, "а")</label>
+        </div>
+
+        <div class="test-question" data-question="4">
+            <p><strong>4. Какой метод убирает пробелы по краям строки?</strong></p>
+            <label><input type="radio" name="q4" value="a"> trim()</label>
+            <label><input type="radio" name="q4" value="b"> clean()</label>
+            <label><input type="radio" name="q4" value="c"> strip()</label>
+            <label><input type="radio" name="q4" value="d"> remove_spaces()</label>
+        </div>
+
+        <div class="test-question" data-question="5">
+            <p><strong>5. Как получить количество символов в строке <code>s</code>?</strong></p>
+            <label><input type="radio" name="q5" value="a"> s.len()</label>
+            <label><input type="radio" name="q5" value="b"> length(s)</label>
+            <label><input type="radio" name="q5" value="c"> len(s)</label>
+            <label><input type="radio" name="q5" value="d"> s.size()</label>
+        </div>
+
+        <div class="test-controls">
+            <button id="nextBtn" onclick="nextOrSubmit()">Далее →</button>
+            <button id="submitBtn" onclick="submitTest()" style="display:none;">Завершить тест</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script type="application/json" id="lesson-answers">
+eyJxMSI6ImIiLCJxMiI6ImIiLCJxMyI6ImMiLCJxNCI6ImMiLCJxNSI6ImMifQ==
+</script>
+
+    <script src="../shared/js/lesson-core.js"></script>
+</body>
+</html>
