@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Тест: Условный оператор if в Python</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fbfd;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    #blocked-message {
+      background: #fff3cd;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+    #quiz, #result {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .question-text {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+    pre {
+      background-color: #f4f6f8;
+      padding: 12px;
+      border-left: 4px solid #3498db;
+      overflow-x: auto;
+      font-size: 14px;
+      margin: 12px 0;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    .option {
+      margin: 12px 0;
+      display: flex;
+      align-items: flex-start;
+    }
+    .option input {
+      margin-top: 6px;
+    }
+    .option strong {
+      margin-right: 8px;
+    }
+    button {
+      display: block;
+      margin: 25px auto 0;
+      padding: 10px 24px;
+      font-size: 16px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    #result {
+      display: none;
+      text-align: center;
+    }
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+      color: #27ae60;
+      margin: 15px 0;
+    }
+    .feedback {
+      margin-top: 15px;
+      text-align: left;
+    }
+    .correct { color: #27ae60; }
+    .wrong { color: #e74c3c; }
+    .timer {
+      color: #e67e22;
+      font-weight: bold;
+    }
+    /* Панель учителя */
+    #teacher-panel {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 2px dashed #2c3e50;
+    }
+    #teacher-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    .teacher-btn {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      font-size: 14px;
+    }
+    .teacher-btn.reset {
+      background-color: #e74c3c;
+    }
+    .teacher-btn.export {
+      background-color: #27ae60;
+    }
+    .teacher-btn.randomize {
+      background-color: #9b59b6;
+    }
+    #question-counter {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #7f8c8d;
+    }
+    /* Окно ввода пароля */
+    #password-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+    #password-form {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      width: 300px;
+      text-align: center;
+    }
+    #password-form h3 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    #password-input {
+      width: 100%;
+      padding: 10px;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    #password-error {
+      color: #e74c3c;
+      margin-top: 10px;
+      display: none;
+    }
+    .password-btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .password-btn:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 Тест: Условный оператор if в Python</h1>
+
+  <div id="blocked-message" style="display:none;">
+    <p>⏳ Вы уже проходили тест. Следующая попытка доступна через <span id="time-left" class="timer"></span>.</p>
+    <p>Попробуйте обновить страницу позже.</p>
+  </div>
+
+  <div id="quiz" style="display:none;">
+    <div id="question-counter"></div>
+    <div id="question-container"></div>
+    <button id="next-btn" onclick="nextQuestion()">Далее</button>
+  </div>
+
+  <div id="result" style="display:none;">
+    <h2>Тест завершён!</h2>
+    <p>Ваш результат:</p>
+    <div class="score" id="final-score"></div>
+    <div class="feedback" id="feedback"></div>
+    <button id="restart-btn" style="display:none;" onclick="location.reload()">Пройти ещё раз</button>
+  </div>
+
+  <!-- Окно ввода пароля -->
+  <div id="password-modal">
+    <div id="password-form">
+      <h3>🔐 Вход для учителя</h3>
+      <p>Введите пароль для доступа к панели управления:</p>
+      <input type="password" id="password-input" placeholder="Пароль">
+      <div id="password-error">Неверный пароль! Попробуйте снова.</div>
+      <button class="password-btn" onclick="checkPassword()">Войти</button>
+      <button class="password-btn" onclick="closePasswordModal()" style="background-color: #95a5a6; margin-top: 5px;">Отмена</button>
+    </div>
+  </div>
+
+  <!-- Панель учителя (изначально скрыта) -->
+  <div id="teacher-panel">
+    <h3 style="color: #2c3e50; margin-top: 0;">📊 Панель учителя</h3>
+    
+    <div style="margin-bottom: 15px;">
+      <button class="teacher-btn" onclick="showAllAnswers()">Показать все ответы</button>
+      <button class="teacher-btn randomize" onclick="toggleRandomization()">Рандомизация: <span id="random-status">ВКЛ</span></button>
+      <button class="teacher-btn reset" onclick="resetTest()">Сбросить тест для всех</button>
+      <button class="teacher-btn export" onclick="exportResults()">Экспорт результатов</button>
+      <button class="teacher-btn" onclick="logoutTeacher()" style="background-color: #e74c3c;">Выйти</button>
+    </div>
+    
+    <div id="teacher-info" style="display:none;">
+      <h4>Правильные ответы:</h4>
+      <ol id="correct-answers-list"></ol>
+      
+      <h4>Настройки теста:</h4>
+      <div style="margin-bottom: 10px;">
+        <label>Количество вопросов:</label>
+        <input type="number" id="question-count" min="5" max="35" value="7" style="width: 60px; margin-left: 10px;">
+        <button class="teacher-btn" onclick="updateQuestionCount()">Применить</button>
+      </div>
+      
+      <h4>Информация о тесте:</h4>
+      <p>Всего вопросов в базе: <span id="total-questions">35</span></p>
+      <p>Вопросов в тесте: <span id="test-questions">7</span></p>
+      <p>Верные ответы в этом сеансе: <span id="correct-count">0</span></p>
+      
+      <h4>Блокировка:</h4>
+      <p>Текущее время блокировки: <span id="block-time">30</span> минут</p>
+      <button class="teacher-btn" onclick="changeBlockTime()">Изменить время блокировки</button>
+    </div>
+  </div>
+
+  <button id="teacher-toggle" onclick="showPasswordModal()">👨‍🏫 Учитель</button>
+
+  <script>
+    // Пароль для доступа к панели учителя
+    const TEACHER_PASSWORD = "Антон"; // Пароль: "Антон"
+    let isTeacherLoggedIn = false;
+
+    // Банк всех доступных вопросов (35 вопросов)
+    const questionBank = [
+      // === Вопросы про if (15 вопросов) ===
+      {
+        text: "Что делает условный оператор <code>if</code> в Python?",
+        type: "choice",
+        options: [
+          "Повторяет действия несколько раз",
+          "Выполняет код только при выполнении условия",
+          "Всегда выполняет код",
+          "Выводит ошибку"
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Какой из следующих фрагментов кода написан правильно?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'if x > 5\n    print("Больше пяти")',
+          'if x > 5:\n    print("Больше пяти")',
+          'if (x > 5):\n    print("Больше пяти")',
+          'if x > 5 then:\n    print("Больше пяти")'
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Что выведет следующий код?",
+        type: "code-choice",
+        code: 'age = 14\nif age >= 12:\n    print("Подросток")\nelse:\n    print("Ребёнок")',
+        options: [
+          "Ребёнок",
+          "Подросток",
+          "Ничего не выведет",
+          "Ошибка"
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Что выведет этот код?",
+        type: "code-choice",
+        code: 'age = 10\nif age >= 12:\n    print("Подросток")\nelse:\n    print("Ребёнок")',
+        options: [
+          "Ребёнок",
+          "Подросток",
+          "Ничего не выведет",
+          "Ошибка"
+        ],
+        correct: 0,
+        category: "if"
+      },
+      {
+        text: "Как проверить, что число <strong>чётное</strong>?",
+        type: "choice",
+        options: [
+          "if number % 2 == 1:",
+          "if number / 2 == 0:",
+          "if number % 2 == 0:",
+          "if number // 2 == 0:"
+        ],
+        correct: 2,
+        category: "if"
+      },
+      {
+        text: "Как проверить, что число <strong>нечётное</strong>?",
+        type: "choice",
+        options: [
+          "if number % 2 == 1:",
+          "if number / 2 != 0:",
+          "if number % 2 == 0:",
+          "if number // 2 == 1:"
+        ],
+        correct: 0,
+        category: "if"
+      },
+      {
+        text: "Какой из этих вариантов выведет строку 'Ноль' при x = 0?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'if x != 0:\n    print("Ноль")',
+          'if x == 0:\n    print("Ноль")',
+          'if x:\n    print("Ноль")',
+          'if not x:\n    print("Не ноль")'
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Какой из этих вариантов выведет строку 'Положительное' при x = 5?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'if x < 0:\n    print("Положительное")',
+          'if x > 0:\n    print("Положительное")',
+          'if x == 0:\n    print("Положительное")',
+          'if x != 5:\n    print("Положительное")'
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Какое условие будет истинным при temperature = 25?",
+        type: "choice",
+        options: [
+          "if temperature > 30:",
+          "if temperature <= 20:",
+          "if temperature == 25:",
+          "if temperature != 25:"
+        ],
+        correct: 2,
+        category: "if"
+      },
+      {
+        text: "Какое условие будет истинным при score = 85?",
+        type: "choice",
+        options: [
+          "if score < 60:",
+          "if score >= 80:",
+          "if score == 70:",
+          "if score <= 50:"
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Что выведет код при n = 7?<br><pre>n = 7\nif n > 5:\n    print('Больше пяти')\nelse:\n    print('Меньше пяти')</pre>",
+        type: "choice",
+        options: [
+          "Больше пяти",
+          "Меньше пяти",
+          "Ничего",
+          "Ошибка"
+        ],
+        correct: 0,
+        category: "if"
+      },
+      {
+        text: "Что выведет код при n = 3?<br><pre>n = 3\nif n > 5:\n    print('Больше пяти')\nelse:\n    print('Меньше пяти')</pre>",
+        type: "choice",
+        options: [
+          "Больше пяти",
+          "Меньше пяти",
+          "Ничего",
+          "Ошибка"
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Что выведет код при x = 10, y = 5?<br><pre>x = 10\ny = 5\nif x > y:\n    print('X больше')\nelse:\n    print('Y больше')</pre>",
+        type: "choice",
+        options: [
+          "X больше",
+          "Y больше",
+          "Ничего",
+          "Ошибка"
+        ],
+        correct: 0,
+        category: "if"
+      },
+      {
+        text: "Что выведет код при x = 3, y = 8?<br><pre>x = 3\ny = 8\nif x > y:\n    print('X больше')\nelse:\n    print('Y больше')</pre>",
+        type: "choice",
+        options: [
+          "X больше",
+          "Y больше",
+          "Ничего",
+          "Ошибка"
+        ],
+        correct: 1,
+        category: "if"
+      },
+      {
+        text: "Как правильно написать условие 'если a равно b'?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'if a = b:',
+          'if a == b:',
+          'if a === b:',
+          'if a equals b:'
+        ],
+        correct: 1,
+        category: "if"
+      },
+
+      // === Вопросы про input() (10 вопросов) ===
+      {
+        text: "Что делает функция <code>input()</code> в Python?",
+        type: "choice",
+        options: [
+          "Выводит текст на экран",
+          "Считывает ввод пользователя с клавиатуры",
+          "Проверяет условие",
+          "Преобразует число в строку"
+        ],
+        correct: 1,
+        category: "input"
+      },
+      {
+        text: "Какой код правильно считывает число с клавиатуры?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'num = input("Введите число: ")',
+          'num = int(input("Введите число: "))',
+          'num = input(int("Введите число: "))',
+          'num = print(input("Введите число: "))'
+        ],
+        correct: 1,
+        category: "input"
+      },
+      {
+        text: "Какой код правильно считывает строку с клавиатуры?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'name = int(input("Имя: "))',
+          'name = input("Имя: ")',
+          'name = str("Имя: ")',
+          'name = print(input("Имя: "))'
+        ],
+        correct: 1,
+        category: "input"
+      },
+      {
+        text: "Что выведет этот код, если ввести '10'?<br><pre>age = input(\"Сколько вам лет? \")\nprint(\"Вам \" + age + \" лет\")</pre>",
+        type: "choice",
+        options: [
+          "Вам 10 лет",
+          "Вам '10' лет",
+          "Ошибка",
+          "Ничего не выведет"
+        ],
+        correct: 0,
+        category: "input"
+      },
+      {
+        text: "Что выведет этот код, если ввести 'Мария'?<br><pre>name = input(\"Ваше имя: \")\nprint(\"Привет, \" + name)</pre>",
+        type: "choice",
+        options: [
+          "Привет, Мария",
+          "Привет, 'Мария'",
+          "Ошибка",
+          "Ничего"
+        ],
+        correct: 0,
+        category: "input"
+      },
+      {
+        text: "Как получить целое число от пользователя?",
+        type: "choice",
+        options: [
+          "num = input()",
+          "num = int(input())",
+          "num = str(input())",
+          "num = float(input())"
+        ],
+        correct: 1,
+        category: "input"
+      },
+      {
+        text: "Как получить дробное число от пользователя?",
+        type: "choice",
+        options: [
+          "num = input()",
+          "num = int(input())",
+          "num = str(input())",
+          "num = float(input())"
+        ],
+        correct: 3,
+        category: "input"
+      },
+      {
+        text: "Что произойдет, если ввести не число в этом коде?<br><pre>num = int(input(\"Введите число: \"))</pre>",
+        type: "choice",
+        options: [
+          "Программа завершится с ошибкой",
+          "Число станет равным 0",
+          "Программа проигнорирует ввод",
+          "Число станет строкой"
+        ],
+        correct: 0,
+        category: "input"
+      },
+      {
+        text: "Что произойдет, если ввести '3.14' в этот код?<br><pre>num = int(input(\"Введите число: \"))</pre>",
+        type: "choice",
+        options: [
+          "Программа завершится с ошибкой",
+          "Число станет равным 3",
+          "Число станет равным 3.14",
+          "Число станет строкой"
+        ],
+        correct: 0,
+        category: "input"
+      },
+      {
+        text: "Как правильно попросить пользователя ввести возраст?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'age = input()',
+          'age = input("Сколько вам лет? ")',
+          'age = print("Сколько вам лет? ")',
+          'input("Сколько вам лет? ")'
+        ],
+        correct: 1,
+        category: "input"
+      },
+
+      // === Вопросы про print() (10 вопросов) ===
+      {
+        text: "Что делает функция <code>print()</code> в Python?",
+        type: "choice",
+        options: [
+          "Считывает ввод",
+          "Выводит текст на экран",
+          "Выполняет математические операции",
+          "Проверяет условия"
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Как вывести текст 'Привет, мир!'?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print("Привет, мир!")',
+          'print(Привет, мир!)',
+          'print "Привет, мир!"',
+          'echo "Привет, мир!"'
+        ],
+        correct: 0,
+        category: "print"
+      },
+      {
+        text: "Как вывести текст 'Python - это круто!'?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print(Python - это круто!)',
+          'print("Python - это круто!")',
+          'print "Python - это круто!"',
+          'echo "Python - это круто!"'
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Как вывести значение переменной x?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print("x")',
+          'print(x)',
+          'print x',
+          'echo x'
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Как вывести значение переменной score?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print("score")',
+          'print(score)',
+          'print score',
+          'display score'
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Что выведет этот код?<br><pre>x = 5\ny = 3\nprint(x + y)</pre>",
+        type: "choice",
+        options: [
+          "x + y",
+          "8",
+          "5 + 3",
+          "Ошибка"
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Что выведет этот код?<br><pre>a = 10\nb = 2\nprint(a * b)</pre>",
+        type: "choice",
+        options: [
+          "a * b",
+          "20",
+          "10 * 2",
+          "Ошибка"
+        ],
+        correct: 1,
+        category: "print"
+      },
+      {
+        text: "Как вывести несколько значений через пробел?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print(10, 20, 30)',
+          'print(10 20 30)',
+          'print("10 20 30")',
+          'print 10, 20, 30'
+        ],
+        correct: 0,
+        category: "print"
+      },
+      {
+        text: "Как вывести 'Имя: Анна, Возраст: 25'?",
+        type: "code-choice",
+        code: null,
+        options: [
+          'print("Имя: Анна, Возраст: 25")',
+          'print(Имя: Анна, Возраст: 25)',
+          'print "Имя: Анна, Возраст: 25"',
+          'echo "Имя: Анна, Возраст: 25"'
+        ],
+        correct: 0,
+        category: "print"
+      },
+      {
+        text: "Что выведет этот код?<br><pre>name = \"Петя\"\nage = 12\nprint(name, \"-\", age, \"лет\")</pre>",
+        type: "choice",
+        options: [
+          "Петя - 12 лет",
+          "name - age лет",
+          "Ошибка",
+          "Ничего"
+        ],
+        correct: 0,
+        category: "print"
+      }
+    ];
+
+    // Проверка блокировки
+    const BLOCK_DURATION = 30 * 60 * 1000; // 30 минут в миллисекундах
+    const lastAttempt = localStorage.getItem('python_if_test_last_attempt');
+    const now = Date.now();
+
+    // === Настройки теста ===
+    let isRandomized = localStorage.getItem('test_randomized') !== 'false'; // по умолчанию ВКЛ
+    let questionCount = parseInt(localStorage.getItem('test_question_count')) || 7;
+    let questions = []; // Будет заполнено при старте теста
+    let currentQuestion = 0;
+    let userAnswers = [];
+
+    // === Функции для панели пароля ===
+    function showPasswordModal() {
+      document.getElementById('password-modal').style.display = 'flex';
+      document.getElementById('password-input').focus();
+    }
+
+    function closePasswordModal() {
+      document.getElementById('password-modal').style.display = 'none';
+      document.getElementById('password-error').style.display = 'none';
+      document.getElementById('password-input').value = '';
+    }
+
+    function checkPassword() {
+      const passwordInput = document.getElementById('password-input').value;
+      const errorElement = document.getElementById('password-error');
+      
+      if (passwordInput === TEACHER_PASSWORD) {
+        isTeacherLoggedIn = true;
+        closePasswordModal();
+        showTeacherPanel();
+        // Сохраняем сессию на 1 час
+        const sessionExpiry = Date.now() + 60 * 60 * 1000;
+        localStorage.setItem('teacher_session', sessionExpiry.toString());
+      } else {
+        errorElement.style.display = 'block';
+        document.getElementById('password-input').value = '';
+        document.getElementById('password-input').focus();
+        
+        // Анимация ошибки
+        errorElement.style.animation = 'none';
+        setTimeout(() => {
+          errorElement.style.animation = 'shake 0.5s';
+        }, 10);
+      }
+    }
+
+    // Анимация для ошибки пароля
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    function showTeacherPanel() {
+      if (!isTeacherLoggedIn) {
+        // Проверяем сохраненную сессию
+        const sessionExpiry = localStorage.getItem('teacher_session');
+        if (sessionExpiry && Date.now() < parseInt(sessionExpiry)) {
+          isTeacherLoggedIn = true;
+        } else {
+          showPasswordModal();
+          return;
+        }
+      }
+      
+      const panel = document.getElementById('teacher-panel');
+      panel.style.display = 'block';
+      loadTeacherInfo();
+    }
+
+    function logoutTeacher() {
+      isTeacherLoggedIn = false;
+      localStorage.removeItem('teacher_session');
+      document.getElementById('teacher-panel').style.display = 'none';
+      alert('Вы вышли из панели учителя.');
+    }
+
+    // Функция для перемешивания массива (алгоритм Фишера-Йетса)
+    function shuffleArray(array) {
+      const shuffled = [...array];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function prepareQuestions() {
+      // Определяем, сколько вопросов использовать (максимум из банка)
+      const count = Math.min(questionCount, questionBank.length);
+      
+      // Выбираем случайные вопросы из банка
+      let selectedQuestions;
+      if (isRandomized) {
+        // Перемешиваем все вопросы и берем первые N
+        selectedQuestions = shuffleArray(questionBank).slice(0, count);
+      } else {
+        // Берем первые N вопросов в исходном порядке
+        selectedQuestions = questionBank.slice(0, count);
+      }
+      
+      // Перемешиваем варианты ответов внутри каждого вопроса
+      selectedQuestions = selectedQuestions.map(q => {
+        if (!q.keepOrder) { // Если не указано сохранять порядок
+          // Создаем массив индексов
+          const indices = Array.from({length: q.options.length}, (_, i) => i);
+          // Перемешиваем индексы
+          const shuffledIndices = shuffleArray(indices);
+          
+          // Создаем новый вопрос с перемешанными вариантами
+          const newQuestion = {
+            ...q,
+            options: shuffledIndices.map(i => q.options[i]),
+            originalCorrect: q.correct, // Сохраняем оригинальный индекс
+            correct: shuffledIndices.indexOf(q.correct) // Новый индекс правильного ответа
+          };
+          return newQuestion;
+        }
+        return q;
+      });
+      
+      return selectedQuestions;
+    }
+
+    function startQuiz() {
+      // Подготавливаем вопросы
+      questions = prepareQuestions();
+      userAnswers = new Array(questions.length).fill(null);
+      currentQuestion = 0;
+      
+      showQuestion(currentQuestion);
+    }
+
+    function showQuestion(index) {
+      const q = questions[index];
+      let html = `<div class="question-text">${q.text}</div>`;
+
+      if (q.code) {
+        html += `<pre>${q.code}</pre>`;
+      }
+
+      html += '<div id="options">';
+      for (let i = 0; i < q.options.length; i++) {
+        const letter = String.fromCharCode(65 + i);
+        const content = q.type === "code-choice"
+          ? `<pre>${q.options[i]}</pre>`
+          : q.options[i];
+
+        html += `
+          <label class="option">
+            <input type="radio" name="answer" value="${i}"
+              ${userAnswers[index] == i ? 'checked' : ''}>
+            <strong>${letter})</strong> ${content}
+          </label>`;
+      }
+      html += '</div>';
+
+      document.getElementById('question-container').innerHTML = html;
+      document.getElementById('next-btn').textContent = 
+        (index === questions.length - 1) ? "Завершить тест" : "Далее";
+      
+      // Показываем счетчик вопросов
+      document.getElementById('question-counter').innerHTML = 
+        `Вопрос ${index + 1} из ${questions.length}`;
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="answer"]:checked');
+      if (!selected) {
+        alert("Пожалуйста, выберите вариант ответа.");
+        return;
+      }
+      userAnswers[currentQuestion] = parseInt(selected.value);
+      // Сохраняем ответ для статистики
+      localStorage.setItem(`question_${currentQuestion}_answer`, selected.value);
+
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
+        showQuestion(currentQuestion);
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function saveUserAnswers() {
+      for (let i = 0; i < userAnswers.length; i++) {
+        if (userAnswers[i] !== null) {
+          localStorage.setItem(`question_${i}_answer`, userAnswers[i].toString());
+        }
+      }
+    }
+
+    function finishQuiz() {
+      // Сохраняем ответы пользователя
+      saveUserAnswers();
+      
+      // Сохраняем время завершения
+      localStorage.setItem('python_if_test_last_attempt', Date.now().toString());
+
+      document.getElementById('quiz').style.display = 'none';
+      document.getElementById('result').style.display = 'block';
+
+      let score = 0;
+      for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].correct) score++;
+      }
+
+      // Оценка по 5-балльной системе
+      let grade;
+      if (score >= questions.length * 0.85) grade = 5; // 85% и выше
+      else if (score >= questions.length * 0.70) grade = 4; // 70% и выше
+      else if (score >= questions.length * 0.50) grade = 3; // 50% и выше
+      else grade = 2;
+
+      document.getElementById('final-score').textContent = 
+        `${score} из ${questions.length} | Оценка: ${grade}`;
+
+      // Обратная связь
+      let feedbackHtml = '<h3>Разбор ответов:</h3><ul>';
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        const userAns = userAnswers[i];
+        const correctLetter = String.fromCharCode(65 + q.correct);
+        const isCorrect = userAns === q.correct;
+        const className = isCorrect ? "correct" : "wrong";
+        const userLetter = userAns !== null ? String.fromCharCode(65 + userAns) : "?";
+
+        let correctAnswerText = q.type === "code-choice"
+          ? `<pre>${q.options[q.correct]}</pre>`
+          : q.options[q.correct];
+
+        feedbackHtml += `
+          <li class="${className}">
+            Вопрос ${i + 1}: ${isCorrect ? "✅ Верно!" : `❌ Ваш ответ: ${userLetter}. Правильно: ${correctLetter}`}
+            ${!isCorrect ? `<br><strong>Правильный ответ:</strong> ${correctAnswerText}` : ''}
+          </li>`;
+      }
+      feedbackHtml += '</ul>';
+      document.getElementById('feedback').innerHTML = feedbackHtml;
+
+      // Проверяем, можно ли пройти снова
+      const canRestart = (Date.now() - now) >= BLOCK_DURATION;
+      const restartBtn = document.getElementById('restart-btn');
+      if (canRestart) {
+        restartBtn.style.display = 'block';
+      }
+    }
+
+    // === Функции панели учителя ===
+    function loadTeacherInfo() {
+      if (!isTeacherLoggedIn) return;
+      
+      // Показываем статус рандомизации
+      document.getElementById('random-status').textContent = isRandomized ? 'ВКЛ' : 'ВЫКЛ';
+      document.getElementById('question-count').value = questionCount;
+      document.getElementById('total-questions').textContent = questionBank.length;
+      document.getElementById('test-questions').textContent = questionCount;
+      
+      // Показываем статистику
+      const correctCount = questions ? questions.filter((q, i) => {
+        const userAnswer = localStorage.getItem(`question_${i}_answer`);
+        return userAnswer && parseInt(userAnswer) === q.correct;
+      }).length : 0;
+      document.getElementById('correct-count').textContent = correctCount;
+      
+      // Показываем блокировку
+      const blockTime = localStorage.getItem('block_duration');
+      if (blockTime) {
+        document.getElementById('block-time').textContent = parseInt(blockTime) / (60 * 1000);
+      }
+    }
+
+    function showAllAnswers() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      const info = document.getElementById('teacher-info');
+      if (info.style.display === 'none') {
+        // Показываем правильные ответы из всего банка
+        const answersList = document.getElementById('correct-answers-list');
+        answersList.innerHTML = '';
+        
+        questionBank.forEach((q, index) => {
+          const li = document.createElement('li');
+          const correctLetter = String.fromCharCode(65 + q.correct);
+          const correctText = q.options ? q.options[q.correct] : 'Нет вариантов';
+          const categoryBadge = `<span style="background: #eee; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">${q.category}</span>`;
+          
+          li.innerHTML = `<strong>Вопрос ${index + 1}:</strong> ${correctLetter}) ${correctText} ${categoryBadge}`;
+          answersList.appendChild(li);
+        });
+        
+        info.style.display = 'block';
+      } else {
+        info.style.display = 'none';
+      }
+    }
+
+    function toggleRandomization() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      isRandomized = !isRandomized;
+      localStorage.setItem('test_randomized', isRandomized);
+      document.getElementById('random-status').textContent = isRandomized ? 'ВКЛ' : 'ВЫКЛ';
+      alert(`Рандомизация вопросов ${isRandomized ? 'включена' : 'отключена'}. Тест будет перезапущен.`);
+      location.reload();
+    }
+
+    function updateQuestionCount() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      const countInput = document.getElementById('question-count');
+      const newCount = parseInt(countInput.value);
+      
+      if (newCount >= 5 && newCount <= questionBank.length) {
+        questionCount = newCount;
+        localStorage.setItem('test_question_count', questionCount);
+        alert(`Количество вопросов изменено на ${questionCount}. Тест будет перезапущен.`);
+        location.reload();
+      } else {
+        alert(`Количество вопросов должно быть от 5 до ${questionBank.length}`);
+        countInput.value = questionCount;
+      }
+    }
+
+    function resetTest() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      if (confirm("Вы уверены? Это сбросит результаты теста для ВСЕХ пользователей!")) {
+        // Очищаем localStorage
+        localStorage.removeItem('python_if_test_last_attempt');
+        
+        // Очищаем ответы на вопросы
+        for (let i = 0; i < questionBank.length; i++) {
+          localStorage.removeItem(`question_${i}_answer`);
+        }
+        
+        alert("Тест сброшен! Обновите страницу.");
+        location.reload();
+      }
+    }
+
+    function exportResults() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      // Собираем данные
+      const results = {
+        timestamp: new Date().toISOString(),
+        totalQuestionsInBank: questionBank.length,
+        questionsInTest: questionCount,
+        isRandomized: isRandomized,
+        lastAttempt: localStorage.getItem('python_if_test_last_attempt'),
+        blockDuration: localStorage.getItem('block_duration') || BLOCK_DURATION,
+        userAnswers: []
+      };
+      
+      // Собираем ответы пользователя
+      for (let i = 0; i < questionCount; i++) {
+        const answer = localStorage.getItem(`question_${i}_answer`);
+        if (answer !== null) {
+          results.userAnswers.push({
+            questionNumber: i + 1,
+            userAnswer: parseInt(answer),
+            isCorrect: questions && questions[i] ? parseInt(answer) === questions[i].correct : null
+          });
+        }
+      }
+      
+      // Создаем текстовый файл для скачивания
+      const dataStr = JSON.stringify(results, null, 2);
+      const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+      
+      const exportFileDefaultName = `test_results_${new Date().toISOString().split('T')[0]}.json`;
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', dataUri);
+      linkElement.setAttribute('download', exportFileDefaultName);
+      linkElement.click();
+    }
+
+    function changeBlockTime() {
+      if (!isTeacherLoggedIn) {
+        showPasswordModal();
+        return;
+      }
+      
+      const newTime = prompt("Введите новое время блокировки в минутах:", "30");
+      if (newTime && !isNaN(newTime) && newTime > 0) {
+        const blockMs = parseInt(newTime) * 60 * 1000;
+        localStorage.setItem('block_duration', blockMs);
+        alert(`Время блокировки изменено на ${newTime} минут`);
+        loadTeacherInfo();
+      }
+    }
+
+    // === Инициализация теста ===
+    if (lastAttempt && (now - parseInt(lastAttempt)) < BLOCK_DURATION) {
+      // Показываем блокировку
+      document.getElementById('blocked-message').style.display = 'block';
+      const timeLeftEl = document.getElementById('time-left');
+      let remaining = BLOCK_DURATION - (now - parseInt(lastAttempt));
+      
+      const timer = setInterval(() => {
+        remaining -= 1000;
+        if (remaining <= 0) {
+          clearInterval(timer);
+          location.reload();
+        } else {
+          const mins = Math.floor(remaining / 60000);
+          const secs = Math.floor((remaining % 60000) / 1000);
+          timeLeftEl.textContent = `${mins} мин ${secs} сек`;
+        }
+      }, 1000);
+    } else {
+      // Можно проходить тест
+      document.getElementById('quiz').style.display = 'block';
+      startQuiz();
+    }
+
+    // Автоматический выход из сессии учителя при закрытии страницы
+    window.addEventListener('beforeunload', function() {
+      if (isTeacherLoggedIn) {
+        // Не очищаем сессию полностью, чтобы можно было восстановить
+        // Сессия истекает через 1 час автоматически
+      }
+    });
+
+    // Ввод пароля по нажатию Enter
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        checkPassword();
+      }
+    });
+  </script>
+
+</body>
+</html>
