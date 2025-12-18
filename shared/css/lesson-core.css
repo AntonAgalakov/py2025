@@ -518,3 +518,34 @@ button:disabled {
         padding: 30px 20px;
     }
 }
+
+
+.file-link {
+    margin: 12px 0;
+}
+
+.file-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #2563eb;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.file-link a:hover {
+    background-color: #dbeafe;
+    color: #1d4ed8;
+}
+
+.answer-hint {
+    margin-top: 8px;
+    font-style: italic;
+    color: #64748b;
+    font-size: 0.95em;
+}
