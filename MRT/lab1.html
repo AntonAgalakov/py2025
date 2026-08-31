@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практическая работа №1 · Структурное тестирование</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Основные стили ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* PIN-оверлей */
+        #pin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        #pin-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .pin-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .pin-box h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+        .pin-box p {
+            color: #475569;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+        .pin-box input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            outline: none;
+            transition: border 0.2s;
+            font-weight: 600;
+        }
+        .pin-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .pin-box .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            height: 24px;
+            font-weight: 500;
+        }
+        .pin-box button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pin-box button:hover {
+            background: #1d4ed8;
+        }
+        .pin-box .hint {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 16px;
+        }
+
+        /* Контейнер и навигация */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 0;
+            transition: box-shadow 0.3s;
+        }
+        nav.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #2563eb;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            color: #0f172a;
+            font-weight: 400;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #334155;
+            transition: color 0.2s;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .hero h1 .highlight {
+            color: #2563eb;
+        }
+        .hero p.sub {
+            font-size: 1.2rem;
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* Секции */
+        section {
+            padding: 48px 0;
+            border-bottom: 1px solid #e9edf2;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .number {
+            background: #2563eb;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+        }
+        .card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+        .card p, .card li {
+            color: #334155;
+            font-size: 0.95rem;
+        }
+        .card ul {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        .card ul li {
+            margin-bottom: 4px;
+        }
+
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 16px 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 16px 0;
+            position: relative;
+        }
+        .code-block .comment { color: #94a3b8; }
+        .code-block .keyword { color: #f472b6; }
+        .code-block .func { color: #60a5fa; }
+        .code-block .string { color: #a3e635; }
+        .code-block .number { color: #fbbf24; }
+        .code-block .error-mark { background: rgba(239,68,68,0.15); border-left: 3px solid #ef4444; padding-left: 8px; }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        th {
+            background: #f1f5f9;
+            font-weight: 600;
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #ecf1f6;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-box {
+            background: #f1f5f9;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            margin: 16px 0;
+        }
+        .info-box strong {
+            color: #0f172a;
+        }
+
+        .btn-top {
+            display: inline-block;
+            padding: 10px 24px;
+            background: #2563eb;
+            color: #fff;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .btn-top:hover {
+            background: #1d4ed8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0 24px;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9edf2;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .nav-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .nav-links {
+                gap: 12px;
+            }
+            .section-title {
+                font-size: 1.4rem;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .scroll-anchor {
+            scroll-margin-top: 80px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PIN-оверлей -->
+<div id="pin-overlay">
+    <div class="pin-box">
+        <h2>🔐 Доступ к работе</h2>
+        <p>Введите PIN-код для просмотра материалов</p>
+        <input type="password" id="pin-input" maxlength="4" placeholder="— — — —" inputmode="numeric">
+        <div class="error-msg" id="pin-error"></div>
+        <button id="pin-btn">Подтвердить</button>
+        <div class="hint">Подсказка: 4 цифры</div>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div id="main-content" style="display: none;">
+
+    <!-- Навигация -->
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <div class="logo">Практика <span>№1</span></div>
+            <ul class="nav-links">
+                <li><a href="#goal">Цель</a></li>
+                <li><a href="#task1">Задание 1</a></li>
+                <li><a href="#task2">Задание 2</a></li>
+                <li><a href="#task3">Задание 3</a></li>
+                <li><a href="#task4">Задание 4</a></li>
+                <li><a href="#appendix">Код</a></li>
+                <li><a href="#criteria">Критерии</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge">Современные технологии программирования  1</div>
+            <h1>Структурное тестирование<br><span class="highlight">C0, C1, C2</span></h1>
+        </div>
+    </section>
+
+    <!-- Цель -->
+    <section id="goal" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">1</span> Цель работы</div>
+            <div class="card-grid" style="grid-template-columns: 1fr;">
+                <div class="card">
+                    <p>Освоить методы структурного тестирования программного обеспечения, научиться применять критерии покрытия <strong>C0</strong> (операторы), <strong>C1</strong> (ветви/решения) и <strong>C2</strong> (пути) для разработки тестовых наборов. В ходе работы студенты строят управляющий граф программы, определяют минимальное количество тестов для достижения 100% покрытия по каждому критерию, реализуют тесты с использованием фреймворка <strong>Google Test</strong>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Задание 1 -->
+    <section id="task1" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">2</span> Задание 1. Построение УГП</div>
+            <div class="card">
+                <p>Для <strong>каждой</strong> функции из Приложения 1 (исходный код) постройте управляющий граф программы.</p>
+                <ul>
+                    <li>Каждая вершина графа должна соответствовать оператору или условию.</li>
+                    <li>Рёбра показывают переходы управления.</li>
+                    <li>Рекомендуется нумеровать вершины согласно комментариям в коде (например, <code>// условие 1</code>).</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Задание 2 -->
+    <section id="task2" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">3</span> Задание 2. Разработка тестов</div>
+            <div class="card">
+                <p>На основе анализа кода разработайте <strong>минимальный набор тестовых случаев</strong>, который обеспечивает:</p>
+                <ul>
+                    <li>100% покрытие операторов (C0)</li>
+                    <li>100% покрытие ветвей (C1)</li>
+                    <li>100% покрытие путей (C2)</li>
+                </ul>
+                <p>Для каждого теста укажите:</p>
+                <ul>
+                    <li>Входные данные (аргументы)</li>
+                    <li>Ожидаемый результат</li>
+                    <li>Какие пути/ветви/операторы покрываются (можно в виде таблицы)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Задание 3 -->
+    <section id="task3" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">4</span> Задание 3. Реализация тестов (Google Test)</div>
+            <div class="card">
+                <p>Напишите тесты на C++ с использованием фреймворка <strong>Google Test</strong>.</p>
+                <ul>
+                    <li>Используйте макросы <code>EXPECT_EQ</code>, <code>EXPECT_DOUBLE_EQ</code>, <code>EXPECT_TRUE</code>/<code>EXPECT_FALSE</code>.</li>
+                    <li>Убедитесь, что тесты для функций с ошибками падают, затем <strong>исправьте ошибки</strong> и проверьте, что все тесты проходят.</li>
+                    <li>В отчёте приведите листинг всех тестов с комментариями о покрытии.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="variants" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">5</span> Распределение заданий</div>
+            <div class="card">
+                <p>Каждый студент выполняет <strong>две функции</strong>:</p>
+                <ul>
+                    <li><strong>Одномерная</strong> – номер <code>(N-1) % 8 + 1</code>, где <code>N</code> – порядковый номер в списке группы.</li>
+                    <li><strong>Двумерная</strong> – номер <code>(N-1) % 5 + 1</code>.</li>
+                </ul>
+                <div class="formula-block">
+                    <strong>Примеры:</strong><br>
+                    Студент №1 → одномерная №1, двумерная №1.<br>
+                    Студент №6 → одномерная №6, двумерная №1.<br>
+                    Студент №10 → одномерная №2, двумерная №5.<br>
+                    Студент №17 → одномерная №1, двумерная №2.
+                </div>
+                <p style="margin-top:8px;">Нумерация функций соответствует порядку в списках Задания 4.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Задание 4 -->
+    <section id="task4" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">6</span> Задание 4. Самостоятельная работа</div>
+            <div class="card">
+                <p>В соответствии с вашим вариантом (определяется преподавателем) <strong>реализуйте две функции</strong> из списков ниже. Для каждой:</p>
+                <ul>
+                    <li>Постройте УГП</li>
+                    <li>Разработайте тесты для C0, C1, C2</li>
+                    <li>Напишите тесты на Google Test</li>
+                    <li>Включите в отчёт о покрытии</li>
+                </ul>
+            </div>
+
+            <h3 style="margin: 24px 0 12px; font-weight: 600;">Функция 1 – одномерные массивы (корзина товаров)</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <strong>1.</strong> Необходимо реализовать функцию <code>double productOddIndices(const std::vector&lt;double&gt;&amp; prices)</code> для того, чтобы вычислять произведение цен товаров, стоящих на нечётных индексах корзины. Если корзина пуста или нет нечётных индексов, функция должна возвращать 1.0.
+                </div>
+                <div class="card">
+                    <strong>2.</strong> Необходимо реализовать функцию <code>void rotatePricesRight(std::vector&lt;double&gt;&amp; prices, int shift)</code> для того, чтобы выполнять циклический сдвиг цен товаров в корзине вправо на заданное число позиций. При пустой корзине или shift &lt;= 0 массив не изменяется.
+                </div>
+                <div class="card">
+                    <strong>3.</strong> Необходимо реализовать функцию <code>double productByIndices(const std::vector&lt;double&gt;&amp; values, const std::vector&lt;int&gt;&amp; indices)</code> для того, чтобы вычислять произведение цен товаров из корзины values, позиции которых заданы в массиве indices. Некорректные индексы игнорируются, при пустом массиве indices возвращается 1.0.
+                </div>
+                <div class="card">
+                    <strong>4.</strong> Необходимо реализовать функцию <code>void reversePrices(std::vector&lt;double&gt;&amp; prices)</code> для того, чтобы переставлять цены товаров в корзине в обратном порядке. При пустой корзине ничего не делать.
+                </div>
+                <div class="card">
+                    <strong>5.</strong> Необходимо реализовать функцию <code>double maxPriceOddValueOddIndex(const std::vector&lt;int&gt;&amp; prices)</code> для того, чтобы находить максимальную цену среди товаров, у которых значение цены нечётное (целая часть) и индекс тоже нечётный. Если таких товаров нет, возвращать 0.0.
+                </div>
+                <div class="card">
+                    <strong>6.</strong> Необходимо реализовать функцию <code>double productEvenIndices(const std::vector&lt;double&gt;&amp; prices)</code> для того, чтобы вычислять произведение цен товаров, стоящих на чётных индексах корзины. Если корзина пуста, возвращать 1.0.
+                </div>
+                <div class="card">
+                    <strong>7.</strong> Необходимо реализовать функцию <code>void rotatePrices(std::vector&lt;double&gt;&amp; prices, int shift, int direction)</code> для того, чтобы выполнять циклический сдвиг цен товаров в корзине на shift позиций в указанном направлении (direction = 0 – вправо, direction = 1 – влево). При пустой корзине или shift &lt;= 0 массив не изменяется.
+                </div>
+                <div class="card">
+                    <strong>8.</strong> Необходимо реализовать функцию <code>double maxPriceEvenValueEvenIndex(const std::vector&lt;int&gt;&amp; prices)</code> для того, чтобы находить максимальную цену среди товаров, у которых значение цены чётное и индекс тоже чётный. Если таких товаров нет, возвращать 0.0.
+                </div>
+            </div>
+
+            <h3 style="margin: 32px 0 12px; font-weight: 600;">Функция 2 – двумерные массивы (матрица цен)</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <strong>1.</strong> Необходимо реализовать функцию <code>int sumOddAboveMainDiagonal(const std::vector&lt;std::vector&lt;int&gt;&gt;&amp; A)</code> для того, чтобы вычислять сумму нечётных элементов двумерного массива (матрицы цен), расположенных выше главной диагонали (индекс строки &lt; индекс столбца). Если таких элементов нет, возвращать 0.
+                </div>
+                <div class="card">
+                    <strong>2.</strong> Необходимо реализовать функцию <code>int sumOddBelowMainDiagonal(const std::vector&lt;std::vector&lt;int&gt;&gt;&amp; A)</code> для того, чтобы вычислять сумму нечётных элементов двумерного массива (матрицы цен), расположенных ниже главной диагонали (индекс строки &gt; индекс столбца). Если таких элементов нет, возвращать 0.
+                </div>
+                <div class="card">
+                    <strong>3.</strong> Необходимо реализовать функцию <code>int sumEvenAboveSecondaryDiagonal(const std::vector&lt;std::vector&lt;int&gt;&gt;&amp; A)</code> для того, чтобы вычислять сумму чётных элементов двумерного массива (матрицы цен), расположенных выше побочной диагонали (индекс строки + индекс столбца &lt; размерность массива - 1). Если таких элементов нет, возвращать 0.
+                </div>
+                <div class="card">
+                    <strong>4.</strong> Необходимо реализовать функцию <code>double minOnAndAboveSecondaryDiagonal(const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; A)</code> для того, чтобы находить минимальное значение среди элементов двумерного массива (матрицы цен), расположенных на побочной диагонали и выше неё (индекс строки + индекс столбца &lt;= размерность массива - 1). Если массив пустой, возвращать 0.0.
+                </div>
+                <div class="card">
+                    <strong>5.</strong> Необходимо реализовать функцию <code>double productOddIndexSum(const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; A)</code> для того, чтобы вычислять произведение элементов двумерного массива (матрицы цен), у которых сумма индексов (строка + столбец) является нечётной. Если таких элементов нет, возвращать 1.0.
+                </div>
+            </div>
+            <div class="info-box" style="margin-top: 16px;">
+                <strong>Примечание:</strong> Все функции должны быть реализованы в <code>order_calc.h</code> / <code>order_calc.cpp</code>. Для каждой напишите отдельный набор тестов.
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Приложение: исходный код -->
+    <!-- ===== ПРИЛОЖЕНИЕ 1 – ОБНОВЛЁННЫЙ КОД ===== -->
+    <section id="appendix" class="scroll-anchor">
+        <div class="container">
+            <div class="section-title"><span class="number">7</span> Приложение 1. Исходный код</div>
+            <div class="card">
+                <p><strong>order_calc.h</strong></p>
+                <div class="code-block">
+                    <span class="keyword">#pragma</span> once<br>
+                    <span class="keyword">#include</span> &lt;string&gt;<br>
+                    <span class="keyword">#include</span> &lt;vector&gt;<br><br>
+                    <span class="keyword">double</span> <span class="func">applyDiscount</span>(<span class="keyword">double</span> total, <span class="keyword">bool</span> isPremium);<br>
+                    <span class="keyword">double</span> <span class="func">calcShipping</span>(<span class="keyword">double</span> total);<br>
+                    <span class="keyword">double</span> <span class="func">finalPrice</span>(<span class="keyword">double</span> total, <span class="keyword">double</span> discount, <span class="keyword">double</span> shipping);<br>
+                    <span class="keyword">int</span> <span class="func">countExpensiveItems</span>(<span class="keyword">const</span> std::<span class="func">vector</span>&lt;<span class="keyword">double</span>&gt;&amp; prices, <span class="keyword">double</span> threshold);
+                </div>
+
+                <p style="margin-top: 20px;"><strong>order_calc.cpp</strong></p>
+                <div class="code-block">
+                    <span class="comment">// 1. Расчёт скидки</span><br>
+                    <span class="comment">// Описание: возвращает сумму со скидкой в зависимости от стоимости заказа и статуса клиента.</span><br>
+                    <span class="comment">// - Если total &lt; 0, возвращает -1.0 (ошибка).</span><br>
+                    <span class="comment">// - Если total &gt;= 10000: скидка 20% для премиум-клиентов, 15% для обычных.</span><br>
+                    <span class="comment">// - Если total &gt;= 5000: скидка 10% для премиум-клиентов, 5% для обычных.</span><br>
+                    <span class="comment">// - В остальных случаях скидка 0%.</span><br>
+                    <span class="keyword">double</span> <span class="func">applyDiscount</span>(<span class="keyword">double</span> total, <span class="keyword">bool</span> isPremium) {<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (total &lt; 0) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> -1.0;<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (total &gt;= 10000) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (isPremium) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> total * 0.80;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> total * 0.85;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;} <span class="keyword">else if</span> (total &gt;= 5000) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (isPremium) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> total * 0.90;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;} <span class="keyword">else</span> {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> total * 0.95;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> total;<br>
+                    }<br><br>
+                    <span class="comment">// 2. Расчёт стоимости доставки</span><br>
+                    <span class="comment">// Описание: возвращает стоимость доставки в зависимости от суммы заказа.</span><br>
+                    <span class="comment">// - Если total &lt; 0, возвращает -1.0 (ошибка).</span><br>
+                    <span class="comment">// - Если total &gt;= 5000, доставка бесплатная (0.0).</span><br>
+                    <span class="comment">// - Иначе доставка стоит 300.0.</span><br>
+                    <span class="keyword">double</span> <span class="func">calcShipping</span>(<span class="keyword">double</span> total) {<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (total &lt; 0) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> -1.0;<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (total &lt;= 5000) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> 0.0;  <br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> 300.0;<br>
+                    }<br><br>
+                    <span class="comment">// 3. Итоговая цена</span><br>
+                    <span class="comment">// Описание: вычисляет финальную стоимость заказа с учётом скидки и доставки.</span><br>
+                    <span class="comment">// - Если любой аргумент отрицательный, возвращает -1.0 (ошибка).</span><br>
+                    <span class="comment">// - Если итоговая цена получается отрицательной, она обнуляется (0.0).</span><br>
+                    <span class="comment">// - Результат округляется до двух знаков после запятой.</span><br>
+                    <span class="keyword">double</span> <span class="func">finalPrice</span>(<span class="keyword">double</span> total, <span class="keyword">double</span> discount, <span class="keyword">double</span> shipping) {<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (total &lt; 0 || discount &lt; 0 || shipping &lt; 0)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> -1.0;<br>
+                    &nbsp;&nbsp;<span class="keyword">double</span> result = total - discount + shipping;<br>
+                    &nbsp;&nbsp;<span class="keyword">if</span> (result &lt; 0) <br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;result = 0.0;<br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> std::<span class="func">round</span>(result * 100) / 100;<br>
+                    }<br><br>
+                    <span class="comment">// 4. Подсчёт количества дорогих товаров в корзине</span><br>
+                    <span class="comment">// Описание: возвращает количество товаров, цена которых превышает заданный порог.</span><br>
+                    <span class="comment">// - Если вектор пустой, возвращает 0.</span><br>
+                    <span class="comment">// - В противном случае подсчитывает количество элементов &gt; threshold.</span><br>
+                    <span class="keyword">int</span> <span class="func">countExpensiveItems</span>(<span class="keyword">const</span> std::<span class="func">vector</span>&lt;<span class="keyword">double</span>&gt;&amp; prices, <span class="keyword">double</span> threshold) {<br>
+                    &nbsp;&nbsp;<span class="keyword">int</span> count = 0;<br>
+                    &nbsp;&nbsp;<span class="keyword">for</span> (<span class="keyword">size_t</span> i = 0; i &lt; prices.size(); ++i) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (prices[i] &gt; threshold) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;count++;<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;}<br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> count;<br>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Практическая работа №1 · Современные технологии программирования 1 · 2026</p>
+            <p style="margin-top: 8px; font-size: 0.8rem;">Лендинг создан в рамках учебного задания</p>
+        </div>
+    </footer>
+
+</div> <!-- /main-content -->
+
+<!-- JavaScript -->
+<script>
+    (function() {
+        const overlay = document.getElementById('pin-overlay');
+        const mainContent = document.getElementById('main-content');
+        const pinInput = document.getElementById('pin-input');
+        const pinBtn = document.getElementById('pin-btn');
+        const pinError = document.getElementById('pin-error');
+
+        const CORRECT_PIN_BASE64 = 'NDMyMQ==';
+
+        // Проверка sessionStorage
+        if (sessionStorage.getItem('pin_verified') === 'true') {
+            overlay.classList.add('hidden');
+            mainContent.style.display = 'block';
+            return;
+        }
+
+        function verifyPin() {
+            const entered = pinInput.value.trim();
+            if (entered === '') {
+                pinError.textContent = 'Введите PIN-код.';
+                return;
+            }
+            // Кодируем введённую строку в Base64 и сравниваем
+            const enteredBase64 = btoa(entered);
+            if (enteredBase64 === CORRECT_PIN_BASE64) {
+                sessionStorage.setItem('pin_verified', 'true');
+                overlay.classList.add('hidden');
+                mainContent.style.display = 'block';
+                pinError.textContent = '';
+            } else {
+                pinError.textContent = 'Неверный PIN-код. Попробуйте ещё раз.';
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        }
+
+        pinBtn.addEventListener('click', verifyPin);
+        pinInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyPin();
+            }
+        });
+        pinInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 4);
+        });
+        pinInput.focus();
+
+        // Навигация (плавный скролл)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const offset = 80;
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Добавление класса nav при скролле
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+    })();
+</script>
+
+</body>
+</html>
