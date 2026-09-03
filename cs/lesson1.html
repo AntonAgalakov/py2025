@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Практическая работа №1 · Информатика</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Основные стили (прежние) ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        #pin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        #pin-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .pin-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .pin-box h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+        .pin-box p {
+            color: #475569;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+        .pin-box input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            outline: none;
+            transition: border 0.2s;
+            font-weight: 600;
+        }
+        .pin-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .pin-box .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            height: 24px;
+            font-weight: 500;
+        }
+        .pin-box button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pin-box button:hover {
+            background: #1d4ed8;
+        }
+        .pin-box .hint {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 16px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 0;
+            transition: box-shadow 0.3s;
+        }
+        nav.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #2563eb;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            color: #0f172a;
+            font-weight: 400;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #334155;
+            transition: color 0.2s;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .hero h1 .highlight {
+            color: #2563eb;
+        }
+        .hero p.sub {
+            font-size: 1.2rem;
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        section {
+            padding: 48px 0;
+            border-bottom: 1px solid #e9edf2;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .number {
+            background: #2563eb;
+            color: #fff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .task-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            transition: box-shadow 0.2s;
+        }
+        .task-card:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+        .task-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .task-card p, .task-card li {
+            font-size: 1.05rem;
+            color: #1e293b;
+            line-height: 1.7;
+        }
+        .task-card ul {
+            padding-left: 24px;
+            margin: 10px 0;
+        }
+        .task-card ul li {
+            margin-bottom: 6px;
+        }
+        .example-block {
+            background: #fef9e7;
+            border-left: 6px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 16px 0 12px 0;
+        }
+        .example-block .label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #b45309;
+            margin-bottom: 8px;
+        }
+        .example-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px dashed #94a3b8;
+            background: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .example-img img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .example-img .placeholder {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .example-caption {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+        .info-box {
+            background: #f1f5f9;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            margin: 16px 0;
+        }
+        .info-box strong {
+            color: #0f172a;
+        }
+        .variant-selector {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: #f1f5f9;
+            padding: 12px 24px;
+            border-radius: 40px;
+            margin: 20px 0 30px;
+            flex-wrap: wrap;
+        }
+        .variant-selector label {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        .variant-selector select {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            font-weight: 500;
+            background: white;
+            cursor: pointer;
+            outline: none;
+        }
+        .variant-selector select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        footer {
+            text-align: center;
+            padding: 40px 0 24px;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9edf2;
+        }
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .nav-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .nav-links {
+                gap: 12px;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+            .task-card {
+                padding: 20px;
+            }
+            .task-card h3 {
+                font-size: 1.2rem;
+            }
+            .variant-selector {
+                padding: 12px 16px;
+                border-radius: 20px;
+            }
+        }
+        .scroll-anchor {
+            scroll-margin-top: 80px;
+        }
+        .sub {
+            font-size: 0.7em;
+            vertical-align: sub;
+        }
+        .sup {
+            font-size: 0.7em;
+            vertical-align: super;
+        }
+    </style>
+</head>
+<body>
+
+<!-- PIN-оверлей -->
+<div id="pin-overlay">
+    <div class="pin-box">
+        <h2>Доступ к работе</h2>
+        <p>Введите PIN-код для просмотра материалов</p>
+        <input type="password" id="pin-input" maxlength="4" placeholder="— — — —" inputmode="numeric">
+        <div class="error-msg" id="pin-error"></div>
+        <button id="pin-btn">Подтвердить</button>
+        <div class="hint">Подсказка: 4 цифры</div>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div id="main-content" style="display: none;">
+
+    <!-- Навигация -->
+    <nav id="navbar">
+        <div class="container nav-inner">
+            <div class="logo">Практика <span>№1</span></div>
+            <ul class="nav-links">
+                <li><a href="#goal">Цель</a></li>
+                <li><a href="#block1">Блок 1</a></li>
+                <li><a href="#block2">Блок 2</a></li>
+                <li><a href="#reference">Справка</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge">Информатика</div>
+            <h1>Системы счисления и <br><span class="highlight">представление чисел</span></h1>
+            <p class="sub">Практическая работа №1 · Выберите свой вариант</p>
+        </div>
+    </section>
+
+    <!-- Селектор варианта (30 вариантов) -->
+    <div class="container">
+        <div class="variant-selector">
+            <label for="variantSelect">Ваш вариант (от 1 до 30):</label>
+            <select id="variantSelect"></select>
+            <span style="font-size:0.9rem; color:#475569;">(номер получаете у преподавателя)</span>
+        </div>
+    </div>
+
+    <!-- Основной контент с заданиями -->
+    <div class="container">
+
+        <!-- Цель -->
+        <section id="goal" class="scroll-anchor">
+            <div class="section-title"><span class="number">1</span> Цель работы</div>
+            <div class="task-card" style="border-left: 4px solid #2563eb;">
+                <p style="font-size: 1.1rem;">Освоить перевод чисел между позиционными системами счисления (двоичной, восьмеричной, десятичной, шестнадцатеричной), выполнять арифметические операции в различных системах, а также изучить способы представления целых чисел в компьютере: прямой, обратный и дополнительный коды.</p>
+                <p style="margin-top: 10px; font-size: 1.1rem;">В ходе работы необходимо решить задачи на перевод чисел, вычисление разности, объёма данных и определение основания системы счисления по условию.</p>
+            </div>
+        </section>
+
+        <!-- Блок 1 -->
+        <section id="block1" class="scroll-anchor">
+            <div class="section-title"><span class="number">2</span> Блок 1</div>
+            <div class="task-list">
+
+                <!-- Задание 1 -->
+                <div class="task-card" id="task-z1">
+                    <h3>Задание 1</h3>
+                    <!-- заполняется через JS -->
+                </div>
+
+                <!-- Задание 2 -->
+                <div class="task-card" id="task-z2">
+                    <h3>Задание 2</h3>
+                </div>
+
+                <!-- Задание 3 -->
+                <div class="task-card" id="task-z3">
+                    <h3>Задание 3</h3>
+                </div>
+
+                <!-- Задание 4 -->
+                <div class="task-card" id="task-z4">
+                    <h3>Задание 4</h3>
+                </div>
+
+                <!-- Задание 5 -->
+                <div class="task-card" id="task-z5">
+                    <h3>Задание 5</h3>
+                </div>
+
+                <!-- Задание 6 -->
+                <div class="task-card" id="task-z6">
+                    <h3>Задание 6</h3>
+                </div>
+
+                <!-- Задание 7 -->
+                <div class="task-card" id="task-z7">
+                    <h3>Задание 7</h3>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Блок 2 -->
+        <section id="block2" class="scroll-anchor">
+            <div class="section-title"><span class="number">3</span> Блок 2</div>
+            <div class="task-list">
+
+                <div class="task-card" id="task-z8">
+                    <h3>Задание 1 (Блок 2)</h3>
+                </div>
+
+                <div class="task-card" id="task-z9">
+                    <h3>Задание 2 (Блок 2)</h3>
+                </div>
+
+                <div class="task-card" id="task-z10">
+                    <h3>Задание 3 (Блок 2)</h3>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer>
+            <p>Практическая работа №1 · Информатика · 2026</p>
+            <p style="margin-top: 8px; font-size: 0.8rem;">Разработано в рамках учебного задания</p>
+        </footer>
+
+    </div> <!-- /container -->
+</div> <!-- /main-content -->
+
+<!-- JavaScript -->
+<script>
+    // ===== Данные для 6 уникальных вариантов =====
+    var variantsData = {
+        1: {
+            z1: { bin: "101011", oct: "53", hex: "2B" },
+            z2: 58,
+            z3: { bin: "101.11", oct: "26.77", hex: "5F.6" },
+            z4: 46.375,
+            z5: { a: 0.67, b: 0.34, c: 17.225 },
+            z6: { t1: "0x3A7", t2: "0x1F2" },
+            z7: { bw: "1101", time: "101" },
+            z8: { a: 45, b: -23, c: 12 },
+            z9: -100,
+            z10: { total: 35, front: 4, back: 13 }
+        },
+        2: {
+            z1: { bin: "110111", oct: "67", hex: "37" },
+            z2: 34,
+            z3: { bin: "110.01", oct: "32.14", hex: "1A.3" },
+            z4: 32.125,
+            z5: { a: 0.52, b: 0.71, c: 23.875 },
+            z6: { t1: "0x4B2", t2: "0x2D1" },
+            z7: { bw: "1010", time: "110" },
+            z8: { a: 62, b: -15, c: 8 },
+            z9: -75,
+            z10: { total: 35, front: 4, back: 13 }
+        },
+        3: {
+            z1: { bin: "1001001", oct: "111", hex: "49" },
+            z2: 42,
+            z3: { bin: "111.01", oct: "53.24", hex: "3A.8" },
+            z4: 54.625,
+            z5: { a: 0.83, b: 0.19, c: 31.750 },
+            z6: { t1: "0x5C8", t2: "0x3E5" },
+            z7: { bw: "1110", time: "011" },
+            z8: { a: 78, b: -42, c: 25 },
+            z9: -112,
+            z10: { total: 35, front: 4, back: 13 }
+        },
+        4: {
+            z1: { bin: "101101", oct: "55", hex: "2D" },
+            z2: 63,
+            z3: { bin: "100.11", oct: "46.35", hex: "2D.7" },
+            z4: 73.250,
+            z5: { a: 0.29, b: 0.58, c: 44.300 },
+            z6: { t1: "0x6E1", t2: "0x4A3" },
+            z7: { bw: "1001", time: "111" },
+            z8: { a: 33, b: -57, c: 6 },
+            z9: -64,
+            z10: { total: 35, front: 4, back: 13 }
+        },
+        5: {
+            z1: { bin: "111001", oct: "71", hex: "39" },
+            z2: 71,
+            z3: { bin: "101.00", oct: "61.12", hex: "4B.5" },
+            z4: 89.500,
+            z5: { a: 0.91, b: 0.43, c: 58.125 },
+            z6: { t1: "0x7D4", t2: "0x5B6" },
+            z7: { bw: "1100", time: "100" },
+            z8: { a: 88, b: -36, c: 19 },
+            z9: -88,
+            z10: { total: 35, front: 4, back: 13 }
+        },
+        6: {
+            z1: { bin: "110010", oct: "62", hex: "32" },
+            z2: 84,
+            z3: { bin: "110.10", oct: "74.55", hex: "5A.2" },
+            z4: 97.750,
+            z5: { a: 0.45, b: 0.87, c: 72.400 },
+            z6: { t1: "0x8F3", t2: "0x6C8" },
+            z7: { bw: "1011", time: "010" },
+            z8: { a: 21, b: -68, c: 30 },
+            z9: -127,
+            z10: { total: 35, front: 4, back: 13 }
+        }
+    };
+
+    // ===== Функции рендеринга каждого задания (без изменений) =====
+    function renderZ1(v) {
+        var d = variantsData[v].z1;
+        return `
+            <div class="example-block">
+                <div class="label">Пример перевода в десятичную систему:</div>
+                <div class="example-img">
+                    <img src="media/image1.png" alt="Пример перевода" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="placeholder" style="display:none;">[Вставьте изображение примера 1]</span>
+                </div>
+                <div class="example-caption"><em>Примеры из файла: 101₂ = 5₁₀, 341₈ = 255₁₀, FA₁₆ = 250₁₀</em></div>
+            </div>
+            <p>Абонент Вася прислал жалобу, в которой его номер указан в трёх разных системах:<br>
+                <strong>${d.bin}<sub>2</sub>, ${d.oct}<sub>8</sub>, ${d.hex}<sub>16</sub></strong>.<br>
+                Петрович утверждает, что это три разных номера, но на самом деле это одно и то же число. Переведите все три числа в двоичную систему счисления и сравните.
+            </p>
+        `;
+    }
+
+    function renderZ2(v) {
+        var num = variantsData[v].z2;
+        return `
+            <div class="example-block">
+                <div class="label">Примеры перевода из десятичной в другие системы:</div>
+                <div class="example-img">
+                    <img src="media/image2.png" alt="Примеры перевода" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="placeholder" style="display:none;">[Вставьте изображение примера 2]</span>
+                </div>
+                <div class="example-caption"><em>11₁₀ → 1011₂; 363₁₀ → 553₈; 363₁₀ → 16B₁₆</em></div>
+            </div>
+            <p>Инженер Петрович настраивает приёмник на частоту <strong>${num} МГц</strong>. В технической документации все параметры заданы в двоичной, восьмеричной и шестнадцатеричной системах, а он привык к десятичной. Переведите <strong>${num}</strong> в эти три системы счисления.</p>
+        `;
+    }
+
+    function renderZ3(v) {
+        var d = variantsData[v].z3;
+        return `
+            <div class="example-block">
+                <div class="label">Примеры перевода дробных чисел в десятичную систему:</div>
+                <div class="example-img">
+                    <img src="media/image3.png" alt="Примеры дробных переводов" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="placeholder" style="display:none;">[Вставьте изображение примера 3]</span>
+                </div>
+                <div class="example-caption"><em>0,75₈ = 0,953125₁₀; F,A₁₆ = 15,625₁₀</em></div>
+            </div>
+            <p>В центре управления сетью зависли три индикатора. Максим записал их показания в разных системах:</p>
+            <ul>
+                <li>Частота несущей – <strong>${d.bin}<sub>2</sub></strong></li>
+                <li>Время задержки сигнала – <strong>${d.oct}<sub>8</sub></strong></li>
+                <li>Длина пакета – <strong>${d.hex}<sub>16</sub></strong></li>
+            </ul>
+            <p>Переведите все параметры в десятичную систему для единого журнала.</p>
+        `;
+    }
+
+    function renderZ4(v) {
+        var num = variantsData[v].z4;
+        return `
+            <div class="example-block">
+                <div class="label">Алгоритм перевода десятичной дроби в другую систему:</div>
+                <div class="example-img">
+                    <img src="media/image4.png" alt="Пошаговый алгоритм" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="placeholder" style="display:none;">[Вставьте изображение примера 4]</span>
+                </div>
+                <div class="example-caption"><em>0,75₁₀ → 0,11₂ (умножение на 2)</em></div>
+            </div>
+            <p>Для настройки радиоканала требуется частота <strong>${num} МГц</strong>. Петрович хочет представить её в двоичной системе с точностью до <strong>5 знаков после запятой</strong>, а затем перевести в восьмеричную и шестнадцатеричную системы.</p>
+        `;
+    }
+
+    function renderZ5(v) {
+        var d = variantsData[v].z5;
+        return `
+            
+            <p>Для заданных десятичных чисел выполните перевод в указанные системы счисления <strong>с точностью до трёх знаков после запятой</strong> (дробная часть должна содержать ровно 3 цифры).</p>
+            <ul>
+                <li><strong>${d.a}</strong> → в двоичную систему</li>
+                <li><strong>${d.b}</strong> → в восьмеричную систему</li>
+                <li><strong>${d.c}</strong> → в двоичную, восьмеричную и шестнадцатеричную системы (три отдельных перевода)</li>
+            </ul>
+        `;
+    }
+
+    function renderZ6(v) {
+        var d = variantsData[v].z6;
+        return `
+            <p>В протоколе передачи данных временные метки задаются в шестнадцатеричном виде:<br>
+                <strong>T1 = ${d.t1}</strong>, <strong>T2 = ${d.t2}</strong>.<br>
+                Вычислите разность <strong>T1 – T2</strong> (время задержки). Результат представьте в десятичной системе.
+            </p>
+        `;
+    }
+
+    function renderZ7(v) {
+        var d = variantsData[v].z7;
+        return `
+            <p>Пропускная способность канала задана в виде <strong>${d.bw}<sub>2</sub> Мбит/с</strong>, а время передачи – <strong>${d.time}<sub>2</sub> секунд</strong>. Найдите объём переданных данных в мегабитах.</p>
+        `;
+    }
+
+    function renderZ8(v) {
+        var d = variantsData[v].z8;
+        return `
+            <p>Для чисел <strong>A = ${d.a}</strong> и <strong>B = ${d.b}</strong> стажёр записал:</p>
+            <ul>
+                <li>ПК(${d.a}) = 00101101, ОК(${d.a}) = 00101101, ДК(${d.a}) = 00101101</li>
+                <li>ПК(${d.b}) = 10010111, ОК(${d.b}) = 11101000, ДК(${d.b}) = 11101001</li>
+            </ul>
+            <p>Всё ли верно? Если нет – исправьте.</p>
+            <p>Для числа <strong>C = ${d.c}</strong> он записал: ПК=ОК=ДК=00001100 – верно ли это?</p>
+        `;
+    }
+
+    function renderZ9(v) {
+        var num = variantsData[v].z9;
+        return `
+            <p>Переведите десятичное число <strong>${num}</strong> в двоичную систему счисления и представьте его в <strong>однобайтовом (8‑битном) дополнительном коде</strong>.</p>
+        `;
+    }
+
+    function renderZ10(v) {
+        var d = variantsData[v].z10;
+        return `
+            <p>В зоопарке живёт удивительное четырёхлапое животное. Сотрудник записал в отчёте:</p>
+            <p><em>«У этого зверя ${d.total} пальцев, на каждой передней лапе по ${d.front} пальца, а на каждой задней лапе по ${d.back} пальцев».</em></p>
+            <p>Коллега заметил, что все числа записаны не в десятичной, а в некоторой другой системе счисления. <strong>Определите основание этой системы счисления</strong>.</p>
+        `;
+    }
+
+    // ===== Функция обновления всех заданий =====
+    function updateTasks(optionNumber) {
+        // Вычисляем реальный индекс варианта (1..6) по циклическому принципу
+        var realIndex = ((optionNumber - 1) % 6) + 1;
+        var v = realIndex;
+
+        document.getElementById('task-z1').innerHTML = '<h3>Задание 1</h3>' + renderZ1(v);
+        document.getElementById('task-z2').innerHTML = '<h3>Задание 2</h3>' + renderZ2(v);
+        document.getElementById('task-z3').innerHTML = '<h3>Задание 3</h3>' + renderZ3(v);
+        document.getElementById('task-z4').innerHTML = '<h3>Задание 4</h3>' + renderZ4(v);
+        document.getElementById('task-z5').innerHTML = '<h3>Задание 5</h3>' + renderZ5(v);
+        document.getElementById('task-z6').innerHTML = '<h3>Задание 6</h3>' + renderZ6(v);
+        document.getElementById('task-z7').innerHTML = '<h3>Задание 7</h3>' + renderZ7(v);
+        document.getElementById('task-z8').innerHTML = '<h3>Задание 1 (Блок 2)</h3>' + renderZ8(v);
+        document.getElementById('task-z9').innerHTML = '<h3>Задание 2 (Блок 2)</h3>' + renderZ9(v);
+        document.getElementById('task-z10').innerHTML = '<h3>Задание 3 (Блок 2)</h3>' + renderZ10(v);
+    }
+
+    // ===== Инициализация селектора с 30 вариантами =====
+    document.addEventListener('DOMContentLoaded', function() {
+        var select = document.getElementById('variantSelect');
+        // Генерируем опции с 1 по 30
+        for (var i = 1; i <= 30; i++) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.textContent = 'Вариант ' + i;
+            select.appendChild(option);
+        }
+        // Устанавливаем вариант по умолчанию (1)
+        select.value = 1;
+        updateTasks(1);
+
+        // Обработчик изменения
+        select.addEventListener('change', function() {
+            var val = parseInt(this.value);
+            updateTasks(val);
+        });
+    });
+
+    // ===== PIN-защита (без изменений) =====
+    (function() {
+        const overlay = document.getElementById('pin-overlay');
+        const mainContent = document.getElementById('main-content');
+        const pinInput = document.getElementById('pin-input');
+        const pinBtn = document.getElementById('pin-btn');
+        const pinError = document.getElementById('pin-error');
+
+        const CORRECT_PIN_BASE64 = 'NDMyMQ=='; // 4321
+
+        if (sessionStorage.getItem('pin_verified') === 'true') {
+            overlay.classList.add('hidden');
+            mainContent.style.display = 'block';
+            return;
+        }
+
+        function verifyPin() {
+            const entered = pinInput.value.trim();
+            if (entered === '') {
+                pinError.textContent = 'Введите PIN-код.';
+                return;
+            }
+            const enteredBase64 = btoa(entered);
+            if (enteredBase64 === CORRECT_PIN_BASE64) {
+                sessionStorage.setItem('pin_verified', 'true');
+                overlay.classList.add('hidden');
+                mainContent.style.display = 'block';
+                pinError.textContent = '';
+                // После разблокировки обновляем задания
+                var select = document.getElementById('variantSelect');
+                if (select) updateTasks(parseInt(select.value));
+            } else {
+                pinError.textContent = 'Неверный PIN-код. Попробуйте ещё раз.';
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        }
+
+        pinBtn.addEventListener('click', verifyPin);
+        pinInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyPin();
+            }
+        });
+        pinInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 4);
+        });
+        pinInput.focus();
+
+        // Плавный скролл по якорям
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const offset = 80;
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Класс для навигации при скролле
+        const nav = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+    })();
+</script>
+
+</body>
+</html>
