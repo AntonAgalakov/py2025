@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аудиторный практикум №1 · Информатика</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        /* стили без изменений, оставлены как в предыдущей версии */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        #pin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        #pin-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .pin-box {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .pin-box h2 {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #0f172a;
+        }
+        .pin-box p {
+            color: #475569;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+        .pin-box input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 4px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            outline: none;
+            transition: border 0.2s;
+            font-weight: 600;
+        }
+        .pin-box input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .pin-box .error-msg {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 12px;
+            height: 24px;
+            font-weight: 500;
+        }
+        .pin-box button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 14px;
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pin-box button:hover {
+            background: #1d4ed8;
+        }
+        .pin-box .hint {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 16px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 12px 0;
+            transition: box-shadow 0.3s;
+        }
+        nav.scrolled {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #2563eb;
+            letter-spacing: -0.5px;
+        }
+        .logo span {
+            color: #0f172a;
+            font-weight: 400;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #334155;
+            transition: color 0.2s;
+            padding: 4px 0;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .hero {
+            padding: 60px 0 40px;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+        .hero h1 .highlight {
+            color: #2563eb;
+        }
+        .hero p.sub {
+            font-size: 1.2rem;
+            color: #475569;
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        section {
+            padding: 48px 0;
+            border-bottom: 1px solid #e9edf2;
+        }
+        section:last-of-type {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title .number {
+            background: #2563eb;
+            color: #fff;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        .task-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 28px 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+            border: 1px solid #eef2f6;
+            transition: box-shadow 0.2s;
+        }
+        .task-card:hover {
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+        .task-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .task-card p, .task-card li {
+            font-size: 1.05rem;
+            color: #1e293b;
+            line-height: 1.7;
+        }
+        .task-card ul {
+            padding-left: 24px;
+            margin: 10px 0;
+        }
+        .task-card ul li {
+            margin-bottom: 6px;
+        }
+        .example-block {
+            background: #fef9e7;
+            border-left: 6px solid #f59e0b;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin: 16px 0 12px 0;
+        }
+        .example-block .label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #b45309;
+            margin-bottom: 8px;
+        }
+        .example-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px dashed #94a3b8;
+            background: #f1f5f9;
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .example-img img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .example-img .placeholder {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .example-caption {
+            font-size: 0.95rem;
+            color: #4b5563;
+            margin-top: 8px;
+        }
+        .info-box {
+            background: #f1f5f9;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2563eb;
+            margin: 16px 0;
+        }
+        .info-box strong {
+            color: #0f172a;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 0 24px;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9edf2;
+        }
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .nav-inner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .nav-links {
+                gap: 12px;
+            }
+            .section-title {
+                font-size: 1.6rem;
+            }
+            .task-card {
+                padding: 20px;
+            }
+            .task-card h3 {
+                font-size: 1.2rem;
+            }
+        }
+        .scroll-anchor {
+            scroll-margin-top: 80px;
+        }
+        .sub {
+            font-size: 0.7em;
+            vertical-align: sub;
+        }
+        .sup {
+            font-size: 0.7em;
+            vertical-align: super;
+        }
+        .num-highlight {
+            background: #e0f2fe;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 1.05em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PIN-оверлей -->
+    <div id="pin-overlay">
+        <div class="pin-box">
+            <h2>Доступ к работе</h2>
+            <p>Введите пароль для просмотра материалов</p>
+            <input type="password" id="pin-input" placeholder="введите пароль" style="letter-spacing: 2px;">
+            <div class="error-msg" id="pin-error"></div>
+            <button id="pin-btn">Подтвердить</button>
+            <div class="hint">Подсказка: <strong>абсд</strong></div>
+        </div>
+    </div>
+
+    <!-- Основной контент (без изменений, все задания статичны) -->
+    <div id="main-content" style="display: none;">
+
+        <nav id="navbar">
+            <div class="container nav-inner">
+                <div class="logo">Аудиторный практикум <span>№1</span></div>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="container">
+                <div class="badge">Информатика</div>
+                <h1>Системы счисления и <br><span class="highlight">представление чисел</span></h1>
+            </div>
+        </section>
+
+        <div class="container">
+
+            <section id="block1" class="scroll-anchor">
+                <div class="section-title"><span class="number">1</span> Блок 1</div>
+                <div class="task-list">
+
+                    <!-- Задание 1 -->
+                    <div class="task-card">
+                        <h3>Задание 1</h3>
+                        <div class="example-block">
+                            <div class="label">Пример перевода в десятичную систему:</div>
+                            <div class="example-img">
+                                <img src="media/image1.png" alt="Пример перевода">
+                            </div>
+                        </div>
+                        <p>Даны три числа в разных системах счисления:</p>
+                        <ul>
+                            <li><span class="num-highlight">112001</span><sub>3</sub></li>
+                            <li><span class="num-highlight">71</span><sub>8</sub></li>
+                            <li><span class="num-highlight">39</span><sub>16</sub></li>
+                        </ul>
+                        <p>Переведите все три числа в <strong>двоичную систему</strong> и сравните их. Определите, являются ли они равными.</p>
+                    </div>
+
+                    <!-- Задание 2 -->
+                    <div class="task-card">
+                        <h3>Задание 2</h3>
+                        <div class="example-block">
+                            <div class="label">Примеры перевода из десятичной в другие системы:</div>
+                            <div class="example-img">
+                                <img src="media/image2.png" alt="Примеры перевода">
+                            </div>
+                        </div>
+                        <p>Переведите десятичное число <strong><span class="num-highlight">73</span></strong> в <strong>двоичную, восьмеричную и шестнадцатеричную</strong> системы счисления.</p>
+                    </div>
+
+                    <!-- Задание 3 -->
+                    <div class="task-card">
+                        <h3>Задание 3</h3>
+                        <div class="example-block">
+                            <div class="label">Примеры перевода дробных чисел в десятичную систему:</div>
+                            <div class="example-img">
+                                <img src="media/image3.png" alt="Примеры дробных переводов">
+                            </div>
+                        </div>
+                        <p>Даны три дробных числа в разных системах счисления:</p>
+                        <ul>
+                            <li><span class="num-highlight">110.10</span><sub>2</sub></li>
+                            <li><span class="num-highlight">74.55</span><sub>8</sub></li>
+                            <li><span class="num-highlight">5A.2</span><sub>16</sub></li>
+                        </ul>
+                        <p>Переведите все три числа в <strong>десятичную систему</strong>.</p>
+                    </div>
+
+                    <!-- Задание 4 -->
+                    <div class="task-card">
+                        <h3>Задание 4</h3>
+                        <div class="example-block">
+                            <div class="label">Алгоритм перевода десятичной дроби в другую систему:</div>
+                            <div class="example-img">
+                                <img src="media/image4.png" alt="Пошаговый алгоритм">
+                                <span class="placeholder">[Вставьте изображение примера 4]</span>
+                            </div>
+                            <div class="example-caption"><em>0,75₁₀ → 0,11₂ (умножение на 2)</em></div>
+                        </div>
+                        <p>Переведите десятичное число <strong><span class="num-highlight">89.500</span></strong> в <strong>двоичную систему</strong> с точностью до <strong>5 знаков</strong> после запятой. Затем полученный результат переведите в <strong>восьмеричную</strong> и <strong>шестнадцатеричную</strong> системы (также с 5 знаками после запятой).</p>
+                    </div>
+
+                    <!-- Задание 5 -->
+                    <div class="task-card">
+                        <h3>Задание 5</h3>
+                        <p>Для заданных десятичных чисел выполните перевод в указанные системы счисления <strong>с точностью до трёх знаков после запятой</strong> (дробная часть должна содержать ровно 3 цифры).</p>
+                        <ul>
+                            <li><strong><span class="num-highlight">0.73</span></strong> → в <strong>двоичную</strong> систему</li>
+                            <li><strong><span class="num-highlight">0.48</span></strong> → в <strong>восьмеричную</strong> систему</li>
+                            <li><strong><span class="num-highlight">35.625</span></strong> → в <strong>двоичную, восьмеричную и шестнадцатеричную</strong> системы (три отдельных перевода)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Задание 6 -->
+                    <div class="task-card">
+                        <h3>Задание 6</h3>
+                        <p>Даны два шестнадцатеричных числа:</p>
+                        <ul>
+                            <li><strong>T1 = <span class="num-highlight">0x7D4</span></strong></li>
+                            <li><strong>T2 = <span class="num-highlight">0x5B6</span></strong></li>
+                        </ul>
+                        <p>Вычислите разность <strong>T1 − T2</strong> и представьте результат в <strong>десятичной системе</strong>.</p>
+                    </div>
+
+                    <!-- Задание 7 -->
+                    <div class="task-card">
+                        <h3>Задание 7</h3>
+                        <p>Пропускная способность канала задана в виде <strong><span class="num-highlight">1011</span><sub>2</sub> Мбит/с</strong>, а время передачи — <strong><span class="num-highlight">110</span><sub>2</sub> секунд</strong>. Найдите объём переданных данных в мегабитах.</p>
+                    </div>
+
+                </div>
+            </section>
+
+            <section id="block2" class="scroll-anchor">
+                <div class="section-title"><span class="number">2</span> Блок 2</div>
+                <div class="task-list">
+
+                    <div class="task-card">
+                        <h3>Задание 1 (Блок 2)</h3>
+                        <p>Для чисел <strong>A = 52</strong> и <strong>B = −31</strong> записаны их представления в 8‑битном формате:</p>
+                        <ul>
+                            <li>ПК(52) = 00110100, ОК(52) = 00110100, ДК(52) = 00110100</li>
+                            <li>ПК(−31) = 10011111, ОК(−31) = 11100000, ДК(−31) = 11100001</li>
+                        </ul>
+                        <p>Проверьте правильность записей. Если есть ошибки — <strong>исправьте</strong> их.</p>
+                        <p>Для числа <strong>C = 18</strong> указано: ПК = ОК = ДК = 00010010. Верно ли это?</p>
+                    </div>
+
+                    <div class="task-card">
+                        <h3>Задание 2 (Блок 2)</h3>
+                        <p>Переведите десятичное число <strong><span class="num-highlight">−83</span></strong> в двоичную систему счисления и представьте его в <strong>однобайтовом (8‑битном) дополнительном коде</strong>.</p>
+                    </div>
+
+                    <div class="task-card">
+                        <h3>Задание 3 (Блок 2)</h3>
+                        <p>Представьте числа <strong><span class="num-highlight">123</span></strong> и <strong><span class="num-highlight">−123</span></strong> в <strong>8‑битном</strong> формате в следующих кодах:</p>
+                        <ul>
+                            <li><strong>прямом</strong> (ПК),</li>
+                            <li><strong>обратном</strong> (ОК),</li>
+                            <li><strong>дополнительном</strong> (ДК).</li>
+                        </ul>
+                        <p>Для каждого числа запишите все три кода в виде 8‑битных двоичных последовательностей.</p>
+                    </div>
+
+                </div>
+            </section>
+            <footer>
+                <p>Аудиторный практикум №1 · Информатика · 2026</p>
+                <p style="margin-top: 8px; font-size: 0.8rem;">Разработано в рамках учебного задания</p>
+            </footer>
+
+        </div>
+    </div>
+
+    <!-- PIN-скрипт с новым паролем "абсд" -->
+    <script>
+        (function() {
+            const overlay = document.getElementById('pin-overlay');
+            const mainContent = document.getElementById('main-content');
+            const pinInput = document.getElementById('pin-input');
+            const pinBtn = document.getElementById('pin-btn');
+            const pinError = document.getElementById('pin-error');
+
+            const CORRECT_PASSWORD = 'абсд'; // новый пароль
+
+            if (sessionStorage.getItem('pin_verified') === 'true') {
+                overlay.classList.add('hidden');
+                mainContent.style.display = 'block';
+                return;
+            }
+
+            function verifyPin() {
+                const entered = pinInput.value.trim();
+                if (entered === '') {
+                    pinError.textContent = 'Введите пароль.';
+                    return;
+                }
+                if (entered === CORRECT_PASSWORD) {
+                    sessionStorage.setItem('pin_verified', 'true');
+                    overlay.classList.add('hidden');
+                    mainContent.style.display = 'block';
+                    pinError.textContent = '';
+                } else {
+                    pinError.textContent = 'Неверный пароль. Попробуйте ещё раз.';
+                    pinInput.value = '';
+                    pinInput.focus();
+                }
+            }
+
+            pinBtn.addEventListener('click', verifyPin);
+            pinInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    verifyPin();
+                }
+            });
+            // Убираем фильтр, разрешаем ввод любых символов
+            pinInput.focus();
+
+            // Плавный скролл
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        const offset = 80;
+                        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            const nav = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) nav.classList.add('scrolled');
+                else nav.classList.remove('scrolled');
+            });
+        })();
+    </script>
+
+</body>
+</html>
