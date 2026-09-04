@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Конструктор УГП</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            height: 52px;
+        }
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header h1 i {
+            color: #58a6ff;
+        }
+        .header .badge {
+            background: #21262d;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: 1px solid #30363d;
+            color: #8b949e;
+        }
+        .app {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .left-panel {
+            width: 50%;
+            background: #0d1117;
+            border-right: 1px solid #30363d;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .left-panel .toolbar {
+            background: #161b22;
+            padding: 8px 14px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            flex-shrink: 0;
+            align-items: center;
+        }
+        .toolbar .btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.15s;
+            font-family: inherit;
+        }
+        .toolbar .btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+        .toolbar .btn.active {
+            background: #1f6feb;
+            border-color: #58a6ff;
+            color: #fff;
+        }
+        .toolbar .btn.danger:hover {
+            border-color: #f85149;
+            color: #f85149;
+        }
+        .toolbar .btn i {
+            font-size: 13px;
+        }
+        .toolbar .sep {
+            width: 1px;
+            height: 24px;
+            background: #30363d;
+            margin: 0 4px;
+        }
+        .toolbar .info {
+            font-size: 12px;
+            color: #8b949e;
+            margin-left: auto;
+        }
+        .graph-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #0d1117;
+            cursor: default;
+        }
+        #graphSvg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .vertex-group {
+            cursor: grab;
+        }
+        .vertex-group:active {
+            cursor: grabbing;
+        }
+        .vertex-circle {
+            stroke-width: 2.5;
+            transition: stroke 0.15s;
+        }
+        .vertex-group:hover .vertex-circle {
+            stroke: #58a6ff;
+        }
+        .vertex-group.selected .vertex-circle {
+            stroke: #f0883e;
+            stroke-width: 4;
+        }
+        .vertex-group.source .vertex-circle {
+            stroke: #58a6ff;
+            stroke-width: 4;
+            stroke-dasharray: 4, 4;
+        }
+        .vertex-id {
+            fill: #e6edf3;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+        }
+        .vertex-type-label {
+            fill: #8b949e;
+            font-size: 11px;
+            font-family: 'Segoe UI', sans-serif;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .edge-line {
+            stroke: #484f58;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .edge-line:hover {
+            stroke: #58a6ff;
+            stroke-width: 3;
+        }
+        .edge-label {
+            fill: #8b949e;
+            font-size: 11px;
+            font-family: 'Segoe UI', sans-serif;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .vertex-port {
+            fill: #30363d;
+            stroke: #484f58;
+            stroke-width: 1.5;
+            cursor: crosshair;
+            transition: 0.15s;
+        }
+        .vertex-port:hover {
+            fill: #58a6ff;
+            stroke: #58a6ff;
+        }
+        .lasso-rect {
+            fill: rgba(88, 166, 255, 0.1);
+            stroke: #58a6ff;
+            stroke-width: 1.5;
+            stroke-dasharray: 4, 4;
+            pointer-events: none;
+        }
+        .group-rect {
+            fill: rgba(255, 255, 255, 0.05);
+            stroke: #f0883e;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+            cursor: grab;
+        }
+        .group-rect:hover {
+            stroke: #58a6ff;
+            stroke-width: 3;
+        }
+        .group-cross {
+            stroke: #f0883e;
+            stroke-width: 1.5;
+            stroke-dasharray: 4, 4;
+            pointer-events: none;
+        }
+        .right-panel {
+            width: 50%;
+            background: #0d1117;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .right-panel .header-code {
+            background: #161b22;
+            padding: 8px 16px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .right-panel .header-code .title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .right-panel .header-code .title i {
+            color: #f0883e;
+        }
+        .right-panel .header-code .actions {
+            display: flex;
+            gap: 6px;
+        }
+        .code-editor-wrapper {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            background: #0d1117;
+            position: relative;
+        }
+        .line-numbers {
+            background: #0d1117;
+            color: #484f58;
+            padding: 12px 10px 12px 16px;
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            user-select: none;
+            border-right: 1px solid #21262d;
+            overflow: hidden;
+            flex-shrink: 0;
+            min-width: 44px;
+            padding-top: 12px;
+        }
+        .line-numbers span {
+            display: block;
+            height: 22.1px;
+        }
+        #codeEditor {
+            flex: 1;
+            background: #0d1117;
+            padding: 12px 16px 12px 18px;
+            border: none;
+            outline: none;
+            resize: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #e6edf3;
+            tab-size: 4;
+            white-space: pre;
+            overflow: auto;
+            min-height: 100%;
+        }
+        #codeEditor::placeholder {
+            color: #484f58;
+            font-style: italic;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        #codeEditor::-webkit-scrollbar {
+            width: 6px;
+        }
+        #codeEditor::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        #codeEditor::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.open {
+            display: flex;
+        }
+        .modal {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px 28px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .modal p {
+            color: #8b949e;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .modal .btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal .btn-group button {
+            padding: 6px 18px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            background: #21262d;
+            color: #c9d1d9;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .modal .btn-group button.primary {
+            background: #1f6feb;
+            border-color: #1f6feb;
+            color: #fff;
+        }
+        .modal .btn-group button.primary:hover {
+            background: #388bfd;
+        }
+        @media (max-width: 860px) {
+            .app {
+                flex-direction: column;
+            }
+            .left-panel {
+                width: 100%;
+                height: 50%;
+                border-right: none;
+                border-bottom: 1px solid #30363d;
+            }
+            .right-panel {
+                width: 100%;
+                height: 50%;
+            }
+        }
+        @media (max-width: 500px) {
+            .toolbar .btn {
+                font-size: 10px;
+                padding: 2px 8px;
+            }
+            .header h1 {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-project-diagram"></i> Конструктор УГП</h1>
+        
+    </header>
+    <div class="app">
+        <div class="left-panel">
+            <div class="toolbar">
+                <button class="btn" id="addStart"><i class="fas fa-play"></i> Start</button>
+                <button class="btn" id="addEnd"><i class="fas fa-stop"></i> End</button>
+                <button class="btn" id="addInput"><i class="fas fa-arrow-down"></i> Input</button>
+                <button class="btn" id="addSimple"><i class="fas fa-circle"></i> Simple</button>
+                <span class="sep"></span>
+                <button class="btn" id="connectMode"><i class="fas fa-link"></i> Соединить</button>
+                <button class="btn" id="deleteMode"><i class="fas fa-trash-alt"></i> Удалить</button>
+                <span class="sep"></span>
+                <button class="btn" id="editNumber"><i class="fas fa-hashtag"></i> Номер</button>
+                <button class="btn" id="groupSelected"><i class="fas fa-object-group"></i> Группировать</button>
+                <button class="btn" id="ungroupSelected"><i class="fas fa-object-ungroup"></i> Разгруппировать</button>
+                <button class="btn danger" id="clearGraph"><i class="fas fa-trash"></i> Очистить</button>
+                <span class="info" id="statusInfo">Режим: выбор</span>
+            </div>
+            <div class="graph-container" id="graphContainer">
+                <svg id="graphSvg" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#484f58" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="header-code">
+                <div class="title"><i class="fas fa-file-code"></i> Редактор кода C++</div>
+                <div class="actions">
+                    <button class="btn" id="copyCode"><i class="fas fa-copy"></i> Копировать</button>
+                    <button class="btn" id="saveState"><i class="fas fa-save"></i> Сохранить</button>
+                    <button class="btn" id="loadState"><i class="fas fa-folder-open"></i> Открыть</button>
+                </div>
+            </div>
+            <div class="code-editor-wrapper">
+                <div class="line-numbers" id="lineNumbers"></div>
+                <textarea id="codeEditor" spellcheck="false" placeholder="// Введите или вставьте код C++ здесь...&#10;// Строки нумеруются автоматически."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" accept=".json" style="display:none" />
+
+    <script>
+        // ============================================================
+        //  МОДЕЛЬ
+        // ============================================================
+        let vertices = [];
+        let edges = [];
+        let groups = [];
+        let nextVertexId = 1;
+        let nextEdgeId = 1;
+        let nextGroupId = 1;
+        let mode = 'select';
+        let selectedVertices = [];
+        let connectSourceId = null;
+        let tempEdge = null;
+        const RADIUS = 30;
+        const GROUP_PADDING = 20;
+
+        const TYPE_META = {
+            start: { label: 'Start', color: '#238636' },
+            end: { label: 'End', color: '#da3633' },
+            input: { label: 'Input', color: '#9e6a03' },
+            simple: { label: '', color: '#1f6feb' }
+        };
+
+        function createVertex(type, x, y, lineNumber = '') {
+            const m = TYPE_META[type] || TYPE_META.simple;
+            return {
+                id: nextVertexId++,
+                type,
+                x,
+                y,
+                label: m.label,
+                color: m.color,
+                lineNumber: lineNumber,
+                variable: '',
+                expression: ''
+            };
+        }
+
+        function addVertexWithNumber(type, x, y) {
+            const num = prompt('Введите номер для вершины (можно оставить пустым):', '');
+            let lineNumber = (num !== null && num.trim() !== '') ? num.trim() : '';
+            const v = createVertex(type, x, y, lineNumber);
+            vertices.push(v);
+            renderGraph();
+            return v;
+        }
+
+        function addVertexDirect(type, x, y, lineNumber) {
+            const v = createVertex(type, x, y, lineNumber || '');
+            vertices.push(v);
+            return v;
+        }
+
+        function removeVertex(id) {
+            groups.forEach(g => {
+                g.vertexIds = g.vertexIds.filter(vid => vid !== id);
+            });
+            groups = groups.filter(g => g.vertexIds.length > 0);
+            edges = edges.filter(e => e.source !== id && e.target !== id);
+            vertices = vertices.filter(v => v.id !== id);
+            selectedVertices = selectedVertices.filter(sid => sid !== id);
+            if (connectSourceId === id) connectSourceId = null;
+            renderGraph();
+        }
+
+        function clearGraph() {
+            if (vertices.length === 0 && groups.length === 0) return;
+            if (confirm('Удалить все вершины, дуги и группы?')) {
+                vertices = [];
+                edges = [];
+                groups = [];
+                nextVertexId = 1;
+                nextEdgeId = 1;
+                nextGroupId = 1;
+                selectedVertices = [];
+                connectSourceId = null;
+                renderGraph();
+            }
+        }
+
+        function addEdge(sourceId, targetId, branch = null) {
+            const exists = edges.some(e => e.source === sourceId && e.target === targetId && e.branch === branch);
+            if (exists) { alert('Такая дуга уже существует.'); return false; }
+            const s = vertices.find(v => v.id === sourceId);
+            const t = vertices.find(v => v.id === targetId);
+            if (!s || !t) return false;
+            if (sourceId === targetId) { alert('Нельзя создать петлю.'); return false; }
+            edges.push({ id: nextEdgeId++, source: sourceId, target: targetId, branch: branch || null });
+            renderGraph();
+            return true;
+        }
+
+        function removeEdge(id) {
+            edges = edges.filter(e => e.id !== id);
+            renderGraph();
+        }
+
+        // ============================================================
+        //  ГРУППИРОВКА
+        // ============================================================
+        function groupSelected() {
+            if (selectedVertices.length < 2) {
+                alert('Выделите как минимум две вершины для группировки (лассо или Shift+клик).');
+                return;
+            }
+            const inGroup = selectedVertices.some(vid => groups.some(g => g.vertexIds.includes(vid)));
+            if (inGroup) {
+                alert('Некоторые выбранные вершины уже в группах. Сначала разгруппируйте их.');
+                return;
+            }
+            const group = {
+                id: nextGroupId++,
+                vertexIds: [...selectedVertices]
+            };
+            groups.push(group);
+            selectedVertices = [];
+            renderGraph();
+        }
+
+        function ungroupSelected() {
+            if (selectedVertices.length === 0) {
+                alert('Сначала выберите вершины, которые входят в группу, или кликните на саму группу.');
+                return;
+            }
+            const groupsToRemove = new Set();
+            selectedVertices.forEach(vid => {
+                groups.forEach(g => {
+                    if (g.vertexIds.includes(vid)) {
+                        groupsToRemove.add(g.id);
+                    }
+                });
+            });
+            if (groupsToRemove.size === 0) {
+                alert('Выбранные вершины не входят ни в одну группу.');
+                return;
+            }
+            groups = groups.filter(g => !groupsToRemove.has(g.id));
+            selectedVertices = [];
+            renderGraph();
+        }
+
+        function ungroupById(groupId) {
+            groups = groups.filter(g => g.id !== groupId);
+            selectedVertices = [];
+            renderGraph();
+        }
+
+        // ============================================================
+        //  РЕДАКТИРОВАНИЕ НОМЕРОВ
+        // ============================================================
+        function editSelectedNumbers() {
+            if (selectedVertices.length === 0) {
+                alert('Сначала выберите вершины (лассо или клик с Shift).');
+                return;
+            }
+            let current = '';
+            if (selectedVertices.length === 1) {
+                const v = vertices.find(v => v.id === selectedVertices[0]);
+                if (v) current = v.lineNumber || '';
+            }
+            const newNum = prompt('Введите новый номер для выбранных вершин (можно оставить пустым):', current);
+            if (newNum === null) return;
+            const trimmed = newNum.trim();
+            selectedVertices.forEach(id => {
+                const v = vertices.find(v => v.id === id);
+                if (v) v.lineNumber = trimmed;
+            });
+            renderGraph();
+        }
+
+        // ============================================================
+        //  РЕНДЕРИНГ
+        // ============================================================
+        function renderGraph() {
+            const svg = document.getElementById('graphSvg');
+            let defs = svg.querySelector('defs');
+            svg.innerHTML = '';
+            if (defs) svg.appendChild(defs);
+            else {
+                defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+                const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+                marker.setAttribute('id', 'arrowhead');
+                marker.setAttribute('markerWidth', '10');
+                marker.setAttribute('markerHeight', '7');
+                marker.setAttribute('refX', '10');
+                marker.setAttribute('refY', '3.5');
+                marker.setAttribute('orient', 'auto');
+                const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                poly.setAttribute('points', '0 0, 10 3.5, 0 7');
+                poly.setAttribute('fill', '#484f58');
+                marker.appendChild(poly);
+                defs.appendChild(marker);
+                svg.appendChild(defs);
+            }
+
+            edges.forEach(edge => {
+                const src = vertices.find(v => v.id === edge.source);
+                const tgt = vertices.find(v => v.id === edge.target);
+                if (!src || !tgt) return;
+                const x1 = src.x,
+                    y1 = src.y + RADIUS;
+                const x2 = tgt.x,
+                    y2 = tgt.y - RADIUS;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1);
+                line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2);
+                line.setAttribute('y2', y2);
+                line.setAttribute('class', 'edge-line');
+                line.dataset.edgeId = edge.id;
+                svg.appendChild(line);
+                if (edge.branch) {
+                    const mx = (x1 + x2) / 2,
+                        my = (y1 + y2) / 2 - 10;
+                    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    txt.setAttribute('x', mx);
+                    txt.setAttribute('y', my);
+                    txt.setAttribute('class', 'edge-label');
+                    txt.textContent = edge.branch;
+                    svg.appendChild(txt);
+                }
+                line.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (mode === 'delete') removeEdge(edge.id);
+                });
+            });
+
+            groups.forEach(group => {
+                const vertexIds = group.vertexIds;
+                if (vertexIds.length === 0) return;
+                let minX = Infinity,
+                    minY = Infinity,
+                    maxX = -Infinity,
+                    maxY = -Infinity;
+                vertexIds.forEach(id => {
+                    const v = vertices.find(v => v.id === id);
+                    if (v) {
+                        if (v.x - RADIUS < minX) minX = v.x - RADIUS;
+                        if (v.y - RADIUS < minY) minY = v.y - RADIUS;
+                        if (v.x + RADIUS > maxX) maxX = v.x + RADIUS;
+                        if (v.y + RADIUS > maxY) maxY = v.y + RADIUS;
+                    }
+                });
+                if (!isFinite(minX)) return;
+                const x = minX - GROUP_PADDING;
+                const y = minY - GROUP_PADDING;
+                const w = maxX - minX + 2 * GROUP_PADDING;
+                const h = maxY - minY + 2 * GROUP_PADDING;
+
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                g.dataset.groupId = group.id;
+                g.setAttribute('class', 'group-container');
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', w);
+                rect.setAttribute('height', h);
+                rect.setAttribute('class', 'group-rect');
+                g.appendChild(rect);
+
+                const cross1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                cross1.setAttribute('x1', x);
+                cross1.setAttribute('y1', y);
+                cross1.setAttribute('x2', x + w);
+                cross1.setAttribute('y2', y + h);
+                cross1.setAttribute('class', 'group-cross');
+                g.appendChild(cross1);
+
+                const cross2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                cross2.setAttribute('x1', x + w);
+                cross2.setAttribute('y1', y);
+                cross2.setAttribute('x2', x);
+                cross2.setAttribute('y2', y + h);
+                cross2.setAttribute('class', 'group-cross');
+                g.appendChild(cross2);
+
+                svg.appendChild(g);
+
+                rect.addEventListener('mousedown', (e) => {
+                    if (mode === 'select') {
+                        selectedVertices = [...group.vertexIds];
+                        renderGraph();
+                        e.preventDefault();
+                        const groupRect = svg.getBoundingClientRect();
+                        dragStartX = e.clientX - groupRect.left;
+                        dragStartY = e.clientY - groupRect.top;
+                        dragTargetGroup = group.id;
+                        isDragging = false;
+                        wasDragging = false;
+                        document.addEventListener('mousemove', onGroupDragMove);
+                        document.addEventListener('mouseup', onGroupDragUp);
+                    }
+                });
+
+                rect.addEventListener('dblclick', (e) => {
+                    if (confirm(`Разгруппировать группу?`)) {
+                        ungroupById(group.id);
+                    }
+                });
+            });
+
+            vertices.forEach(v => {
+                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                group.setAttribute('class', 'vertex-group');
+                group.dataset.vertexId = v.id;
+                if (selectedVertices.includes(v.id)) group.classList.add('selected');
+                if (connectSourceId === v.id) group.classList.add('source');
+
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', v.x);
+                circle.setAttribute('cy', v.y);
+                circle.setAttribute('r', RADIUS);
+                circle.setAttribute('fill', '#161b22');
+                circle.setAttribute('stroke', v.color);
+                circle.setAttribute('class', 'vertex-circle');
+                group.appendChild(circle);
+
+                const displayNumber = v.lineNumber && v.lineNumber.trim() !== '' ? v.lineNumber : String(v.id);
+                const idText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                idText.setAttribute('x', v.x);
+                idText.setAttribute('y', v.y - 6);
+                idText.setAttribute('class', 'vertex-id');
+                idText.textContent = displayNumber;
+                group.appendChild(idText);
+
+                if (v.type !== 'simple') {
+                    const typeLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    typeLabel.setAttribute('x', v.x);
+                    typeLabel.setAttribute('y', v.y + 22);
+                    typeLabel.setAttribute('class', 'vertex-type-label');
+                    typeLabel.textContent = v.label;
+                    group.appendChild(typeLabel);
+                }
+
+                if (v.type !== 'start') {
+                    const inPort = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    inPort.setAttribute('cx', v.x);
+                    inPort.setAttribute('cy', v.y - RADIUS);
+                    inPort.setAttribute('r', '6');
+                    inPort.setAttribute('class', 'vertex-port');
+                    inPort.dataset.vertexId = v.id;
+                    inPort.dataset.portType = 'in';
+                    group.appendChild(inPort);
+                }
+                if (v.type !== 'end') {
+                    const outPort = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    outPort.setAttribute('cx', v.x);
+                    outPort.setAttribute('cy', v.y + RADIUS);
+                    outPort.setAttribute('r', '6');
+                    outPort.setAttribute('class', 'vertex-port');
+                    outPort.dataset.vertexId = v.id;
+                    outPort.dataset.portType = 'out';
+                    group.appendChild(outPort);
+                }
+
+                svg.appendChild(group);
+
+                group.addEventListener('mousedown', (e) => onVertexMouseDown(e, v.id));
+                group.addEventListener('dblclick', (e) => onVertexDblClick(e, v.id));
+
+                group.addEventListener('click', (e) => {
+                    if (wasDragging) {
+                        wasDragging = false;
+                        return;
+                    }
+                    if (mode === 'connect') {
+                        e.stopPropagation();
+                        handleConnectClick(v.id);
+                    }
+                });
+            });
+
+            if (lassoRect) {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', Math.min(lassoRect.x1, lassoRect.x2));
+                rect.setAttribute('y', Math.min(lassoRect.y1, lassoRect.y2));
+                rect.setAttribute('width', Math.abs(lassoRect.x2 - lassoRect.x1));
+                rect.setAttribute('height', Math.abs(lassoRect.y2 - lassoRect.y1));
+                rect.setAttribute('class', 'lasso-rect');
+                svg.appendChild(rect);
+            }
+
+            if (tempEdge) {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', tempEdge.x1);
+                line.setAttribute('y1', tempEdge.y1);
+                line.setAttribute('x2', tempEdge.x2);
+                line.setAttribute('y2', tempEdge.y2);
+                line.setAttribute('stroke', '#58a6ff');
+                line.setAttribute('stroke-width', '2');
+                line.setAttribute('stroke-dasharray', '5,5');
+                svg.appendChild(line);
+            }
+
+            document.getElementById('statusInfo').textContent =
+                `Вершин: ${vertices.length}, Дуг: ${edges.length}, Групп: ${groups.length}, Выбрано: ${selectedVertices.length} | Режим: ${mode}`;
+        }
+
+        // ============================================================
+        //  ЛАССО
+        // ============================================================
+        let lassoRect = null;
+        let lassoStartX = 0,
+            lassoStartY = 0;
+        const svgElement = document.getElementById('graphSvg');
+
+        svgElement.addEventListener('mousedown', (e) => {
+            if (mode !== 'select') return;
+            if (e.target.closest('.vertex-group') || e.target.closest('.vertex-port') || e.target.closest(
+                    '.group-container')) return;
+            const rect = svgElement.getBoundingClientRect();
+            lassoStartX = e.clientX - rect.left;
+            lassoStartY = e.clientY - rect.top;
+            lassoRect = { x1: lassoStartX, y1: lassoStartY, x2: lassoStartX, y2: lassoStartY };
+            renderGraph();
+            document.addEventListener('mousemove', onLassoMove);
+            document.addEventListener('mouseup', onLassoUp);
+        });
+
+        function onLassoMove(e) {
+            if (!lassoRect) return;
+            const rect = svgElement.getBoundingClientRect();
+            lassoRect.x2 = e.clientX - rect.left;
+            lassoRect.y2 = e.clientY - rect.top;
+            renderGraph();
+        }
+
+        function onLassoUp(e) {
+            document.removeEventListener('mousemove', onLassoMove);
+            document.removeEventListener('mouseup', onLassoUp);
+            if (lassoRect) {
+                const x1 = Math.min(lassoRect.x1, lassoRect.x2);
+                const y1 = Math.min(lassoRect.y1, lassoRect.y2);
+                const x2 = Math.max(lassoRect.x1, lassoRect.x2);
+                const y2 = Math.max(lassoRect.y1, lassoRect.y2);
+                if (Math.abs(lassoRect.x2 - lassoRect.x1) < 5 && Math.abs(lassoRect.y2 - lassoRect.y1) < 5) {
+                    lassoRect = null;
+                    renderGraph();
+                    return;
+                }
+                const newSelection = [];
+                vertices.forEach(v => {
+                    if (v.x >= x1 && v.x <= x2 && v.y >= y1 && v.y <= y2) {
+                        newSelection.push(v.id);
+                    }
+                });
+                if (newSelection.length > 0) {
+                    if (e.shiftKey) {
+                        selectedVertices = [...new Set([...selectedVertices, ...newSelection])];
+                    } else {
+                        selectedVertices = newSelection;
+                    }
+                } else {
+                    if (!e.shiftKey) selectedVertices = [];
+                }
+                lassoRect = null;
+                renderGraph();
+            }
+        }
+
+        // ============================================================
+        //  ПЕРЕТАСКИВАНИЕ ГРУПП
+        // ============================================================
+        let dragTargetGroup = null;
+        let dragStartX = 0,
+            dragStartY = 0;
+
+        function onGroupDragMove(e) {
+            if (dragTargetGroup === null) return;
+            const rect = svgElement.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            const dx = currentX - dragStartX;
+            const dy = currentY - dragStartY;
+            if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                isDragging = true;
+                wasDragging = true;
+            }
+            if (isDragging) {
+                const group = groups.find(g => g.id === dragTargetGroup);
+                if (group) {
+                    group.vertexIds.forEach(id => {
+                        const v = vertices.find(v => v.id === id);
+                        if (v) {
+                            v.x = Math.max(RADIUS, v.x + dx);
+                            v.y = Math.max(RADIUS, v.y + dy);
+                        }
+                    });
+                    dragStartX = currentX;
+                    dragStartY = currentY;
+                    renderGraph();
+                }
+            }
+        }
+
+        function onGroupDragUp(e) {
+            document.removeEventListener('mousemove', onGroupDragMove);
+            document.removeEventListener('mouseup', onGroupDragUp);
+            wasDragging = false;
+            isDragging = false;
+            dragTargetGroup = null;
+        }
+
+        // ============================================================
+        //  ВЗАИМОДЕЙСТВИЕ С ВЕРШИНАМИ
+        // ============================================================
+        let dragTarget = null;
+        let isDragging = false;
+        let wasDragging = false;
+
+        function onVertexMouseDown(e, vid) {
+            if (mode === 'delete') { removeVertex(vid); return; }
+            if (mode === 'select') {
+                if (e.shiftKey) {
+                    const idx = selectedVertices.indexOf(vid);
+                    if (idx === -1) selectedVertices.push(vid);
+                    else selectedVertices.splice(idx, 1);
+                    renderGraph();
+                    e.preventDefault();
+                    return;
+                }
+                const v = vertices.find(v => v.id === vid);
+                if (!v) return;
+                const rect = svgElement.getBoundingClientRect();
+                dragStartX = e.clientX - rect.left;
+                dragStartY = e.clientY - rect.top;
+                dragTarget = vid;
+                isDragging = false;
+                wasDragging = false;
+                if (!selectedVertices.includes(vid)) {
+                    selectedVertices = [vid];
+                    renderGraph();
+                }
+                document.addEventListener('mousemove', onMouseMoveForDrag);
+                document.addEventListener('mouseup', onMouseUpForDrag);
+                e.preventDefault();
+            }
+        }
+
+        function onMouseMoveForDrag(e) {
+            if (dragTarget === null) return;
+            const rect = svgElement.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+            const dx = currentX - dragStartX;
+            const dy = currentY - dragStartY;
+            if (!isDragging && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+                isDragging = true;
+                wasDragging = true;
+            }
+            if (isDragging) {
+                selectedVertices.forEach(id => {
+                    const v = vertices.find(v => v.id === id);
+                    if (v) {
+                        v.x = Math.max(RADIUS, v.x + dx);
+                        v.y = Math.max(RADIUS, v.y + dy);
+                    }
+                });
+                dragStartX = currentX;
+                dragStartY = currentY;
+                renderGraph();
+            }
+        }
+
+        function onMouseUpForDrag(e) {
+            document.removeEventListener('mousemove', onMouseMoveForDrag);
+            document.removeEventListener('mouseup', onMouseUpForDrag);
+            wasDragging = false;
+            isDragging = false;
+            dragTarget = null;
+        }
+
+        function onVertexDblClick(e, vid) {
+            const v = vertices.find(v => v.id === vid);
+            if (!v) return;
+            const current = v.lineNumber || '';
+            const newNum = prompt('Введите новый номер для вершины (можно оставить пустым):', current);
+            if (newNum !== null) {
+                v.lineNumber = newNum.trim();
+                renderGraph();
+            }
+        }
+
+        // ============================================================
+        //  СОЕДИНЕНИЕ
+        // ============================================================
+        function handleConnectClick(vid) {
+            const vertex = vertices.find(v => v.id === vid);
+            if (!vertex) return;
+
+            if (connectSourceId === null) {
+                if (vertex.type === 'end') {
+                    alert('Нельзя начать дугу из End.');
+                    return;
+                }
+                connectSourceId = vid;
+                const src = vertices.find(v => v.id === vid);
+                if (src) {
+                    tempEdge = { x1: src.x, y1: src.y + RADIUS, x2: src.x, y2: src.y + RADIUS };
+                }
+                renderGraph();
+                return;
+            }
+
+            const sourceId = connectSourceId;
+            if (vertex.type === 'start') {
+                alert('Нельзя вести дугу в Start.');
+                resetConnect();
+                return;
+            }
+            if (sourceId === vid) {
+                alert('Нельзя создать петлю.');
+                resetConnect();
+                return;
+            }
+            const existing = edges.some(e => e.source === sourceId && e.target === vid);
+            if (existing) {
+                alert('Такая дуга уже существует.');
+                resetConnect();
+                return;
+            }
+            addEdge(sourceId, vid, null);
+            resetConnect();
+        }
+
+        function resetConnect() {
+            connectSourceId = null;
+            tempEdge = null;
+            renderGraph();
+        }
+
+        // ============================================================
+        //  РЕДАКТОР КОДА
+        // ============================================================
+        const codeEditor = document.getElementById('codeEditor');
+        const lineNumbersDiv = document.getElementById('lineNumbers');
+
+        function updateLineNumbers() {
+            const lines = codeEditor.value.split('\n');
+            const count = lines.length;
+            let html = '';
+            for (let i = 1; i <= count; i++) {
+                html += `<span>${i}</span>`;
+            }
+            lineNumbersDiv.innerHTML = html;
+        }
+
+        codeEditor.addEventListener('scroll', () => {
+            lineNumbersDiv.scrollTop = codeEditor.scrollTop;
+        });
+        codeEditor.addEventListener('input', updateLineNumbers);
+        window.addEventListener('resize', updateLineNumbers);
+        setTimeout(updateLineNumbers, 10);
+
+        // ============================================================
+        //  СОХРАНЕНИЕ / ЗАГРУЗКА
+        // ============================================================
+        function saveStateToFile() {
+            const state = {
+                vertices,
+                edges,
+                groups,
+                nextVertexId,
+                nextEdgeId,
+                nextGroupId,
+                code: codeEditor.value
+            };
+            const json = JSON.stringify(state, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ugp_state.json';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadStateFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const state = JSON.parse(e.target.result);
+                    vertices = state.vertices || [];
+                    edges = state.edges || [];
+                    groups = state.groups || [];
+                    nextVertexId = state.nextVertexId || 1;
+                    nextEdgeId = state.nextEdgeId || 1;
+                    nextGroupId = state.nextGroupId || 1;
+                    codeEditor.value = state.code || '';
+                    selectedVertices = [];
+                    connectSourceId = null;
+                    tempEdge = null;
+                    renderGraph();
+                    updateLineNumbers();
+                } catch (err) {
+                    alert('Ошибка при загрузке файла: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        document.getElementById('saveState').addEventListener('click', saveStateToFile);
+        document.getElementById('loadState').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                loadStateFromFile(e.target.files[0]);
+                e.target.value = '';
+            }
+        });
+
+        // ============================================================
+        //  УПРАВЛЕНИЕ РЕЖИМАМИ
+        // ============================================================
+        function setMode(m) {
+            mode = m;
+            if (mode === 'connect') {
+                connectSourceId = null;
+                tempEdge = null;
+            }
+            renderGraph();
+            document.querySelectorAll('.toolbar .btn').forEach(b => b.classList.remove('active'));
+            if (mode === 'connect') document.getElementById('connectMode').classList.add('active');
+            else if (mode === 'delete') document.getElementById('deleteMode').classList.add('active');
+            document.getElementById('statusInfo').textContent = `Режим: ${mode}`;
+        }
+
+        document.getElementById('connectMode').addEventListener('click', () => setMode(mode === 'connect' ? 'select' :
+            'connect'));
+        document.getElementById('deleteMode').addEventListener('click', () => setMode(mode === 'delete' ? 'select' :
+            'delete'));
+
+        // ============================================================
+        //  ДОБАВЛЕНИЕ ВЕРШИН
+        // ============================================================
+        function addAtRandom(type) {
+            const container = document.getElementById('graphContainer');
+            const rect = container.getBoundingClientRect();
+            const x = RADIUS + 20 + Math.random() * (rect.width - 2 * RADIUS - 40);
+            const y = RADIUS + 20 + Math.random() * (rect.height - 2 * RADIUS - 40);
+            addVertexWithNumber(type, x, y);
+        }
+
+        document.getElementById('addStart').addEventListener('click', () => addAtRandom('start'));
+        document.getElementById('addEnd').addEventListener('click', () => addAtRandom('end'));
+        document.getElementById('addInput').addEventListener('click', () => addAtRandom('input'));
+        document.getElementById('addSimple').addEventListener('click', () => addAtRandom('simple'));
+        document.getElementById('clearGraph').addEventListener('click', clearGraph);
+
+        // ============================================================
+        //  КНОПКИ ГРУППИРОВКИ
+        // ============================================================
+        document.getElementById('groupSelected').addEventListener('click', groupSelected);
+        document.getElementById('ungroupSelected').addEventListener('click', ungroupSelected);
+
+        // ============================================================
+        //  КНОПКА "НОМЕР"
+        // ============================================================
+        document.getElementById('editNumber').addEventListener('click', editSelectedNumbers);
+
+        // ============================================================
+        //  КОПИРОВАНИЕ
+        // ============================================================
+        document.getElementById('copyCode').addEventListener('click', () => {
+            const code = codeEditor.value;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copyCode');
+                btn.innerHTML = '<i class="fas fa-check"></i> Готово!';
+                setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Копировать', 2000);
+            }).catch(() => {
+                const area = document.createElement('textarea');
+                area.value = code;
+                document.body.appendChild(area);
+                area.select();
+                document.execCommand('copy');
+                area.remove();
+                alert('Код скопирован!');
+            });
+        });
+
+        // ============================================================
+        //  ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+        renderGraph();
+        codeEditor.value = '// Добавьте вершины слева, соединяйте дугами, группируйте.\n// Номера задаются при создании или двойным кликом.';
+        updateLineNumbers();
+
+        console.log('Конструктор УГП загружен.');
+        console.log('Для соединения включите режим "Соединить" и кликните по вершинам.');
+    </script>
+</body>
+</html>
