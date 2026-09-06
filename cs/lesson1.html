@@ -372,6 +372,27 @@
             font-size: 0.7em;
             vertical-align: super;
         }
+
+                /* Дополнительный стиль для предупреждения */
+        .no-python-warning {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .no-python-warning .icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .no-python-warning .text {
+            font-weight: 600;
+            color: #991b1b;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -586,10 +607,18 @@
         }
     };
 
+    // ===== Вспомогательная функция для предупреждения =====
+    function getNoPythonWarning() {
+        return `<div class="no-python-warning">
+            <span class="icon">🚫</span>
+            <span class="text">Запрещено использовать Python — только ручной расчёт</span>
+        </div>`;
+    }
+
     // ===== Функции рендеринга каждого задания (без изменений) =====
     function renderZ1(v) {
         var d = variantsData[v].z1;
-        return `
+        return getNoPythonWarning() + `
             <div class="example-block">
                 <div class="label">Пример перевода в десятичную систему:</div>
                 <div class="example-img">
@@ -606,7 +635,7 @@
 
     function renderZ2(v) {
         var num = variantsData[v].z2;
-        return `
+        return getNoPythonWarning() + `
             <div class="example-block">
                 <div class="label">Примеры перевода из десятичной в другие системы:</div>
                 <div class="example-img">
@@ -621,7 +650,7 @@
 
     function renderZ3(v) {
         var d = variantsData[v].z3;
-        return `
+        return getNoPythonWarning() + `
             <div class="example-block">
                 <div class="label">Примеры перевода дробных чисел в десятичную систему:</div>
                 <div class="example-img">
@@ -641,7 +670,7 @@
 
     function renderZ4(v) {
         var num = variantsData[v].z4;
-        return `
+        return getNoPythonWarning() + `
             <div class="example-block">
                 <div class="label">Алгоритм перевода десятичной дроби в другую систему:</div>
                 <div class="example-img">
@@ -656,7 +685,7 @@
 
     function renderZ5(v) {
         var d = variantsData[v].z5;
-        return `
+        return getNoPythonWarning() + `
             
             <p>Для заданных десятичных чисел выполните перевод в указанные системы счисления <strong>с точностью до трёх знаков после запятой</strong> (дробная часть должна содержать ровно 3 цифры).</p>
             <ul>
@@ -669,7 +698,7 @@
 
     function renderZ6(v) {
         var d = variantsData[v].z6;
-        return `
+        return getNoPythonWarning() + `
             <p>В протоколе передачи данных временные метки задаются в шестнадцатеричном виде:<br>
                 <strong>T1 = ${d.t1}</strong>, <strong>T2 = ${d.t2}</strong>.<br>
                 Вычислите разность <strong>T1 – T2</strong> (время задержки). Результат представьте в десятичной системе.
@@ -679,14 +708,14 @@
 
     function renderZ7(v) {
         var d = variantsData[v].z7;
-        return `
+        return getNoPythonWarning() + `
             <p>Пропускная способность канала задана в виде <strong>${d.bw}<sub>2</sub> Мбит/с</strong>, а время передачи – <strong>${d.time}<sub>2</sub> секунд</strong>. Найдите объём переданных данных в мегабитах.</p>
         `;
     }
 
     function renderZ8(v) {
         var d = variantsData[v].z8;
-        return `
+        return getNoPythonWarning() + `
             <p>Для чисел <strong>A = ${d.a}</strong> и <strong>B = ${d.b}</strong> стажёр записал:</p>
             <ul>
                 <li>ПК(${d.a}) = 00101101, ОК(${d.a}) = 00101101, ДК(${d.a}) = 00101101</li>
@@ -699,7 +728,7 @@
 
     function renderZ9(v) {
         var num = variantsData[v].z9;
-        return `
+        return getNoPythonWarning() + `
             <p>Переведите десятичное число <strong>${num}</strong> в двоичную систему счисления и представьте его в <strong>однобайтовом (8‑битном) дополнительном коде</strong>.</p>
         `;
     }
